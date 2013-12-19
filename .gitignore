@@ -4,7 +4,7 @@
 # NOTE: I want to keep the eclipse project files so one can clone it and simply load it into Eclipse with my development settings.
 #.project
 #.classpath
-#.settings
+.settings
 
 ######################################
 # Ignore Generated Directories
