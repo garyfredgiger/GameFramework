@@ -1,6 +1,69 @@
-*.class
+######################################
+# Eclispe Files
+######################################
+# NOTE: I want to keep the eclipse project files so one can clone it and simply load it into Eclipse with my development settings.
+#.project
+#.classpath
+#.settings
 
-# Package Files #
+######################################
+# Ignore Generated Directories
+######################################
+bin
+
+######################################
+# Ignore Compiled source
+######################################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+*.applet
+
+######################################
+# Ignore Package Files
+######################################
 *.jar
 *.war
 *.ear
+*.7z
+*.dmg
+*.gz
+*.iso
+*.rar
+*.tar
+*.zip
+
+######################################
+# Ignore Image Files
+######################################
+*.png
+*.jpg
+*.bmp
+
+######################################
+# Ignore audio files
+######################################
+*.au
+*.mid
+*.wav
+
+######################################
+# Ignore Logs and databases
+######################################
+*.log
+*.sql
+*.sqlite
+
+######################################
+# Ignore OS generated files
+######################################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
