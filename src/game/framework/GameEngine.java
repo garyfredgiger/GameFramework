@@ -7,8 +7,6 @@ import game.framework.utilities.GameEngineConstants;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.Toolkit;
-import java.awt.image.BufferStrategy;
 import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -16,10 +14,10 @@ import java.util.LinkedList;
 public abstract class GameEngine
 {
   /*
-   *  Instance variables for the specific game
+   *  Instance variables for the game engine.
    */
 
-  protected GameEngineConstants.GameState state;                                           // current state of the game
+  protected GameEngineConstants.GameState state;                                              // current state of the game
   protected long                          updateAndRenderLoopTime,
       loopSleepTime;
 
@@ -32,35 +30,55 @@ public abstract class GameEngine
   private LinkedList<Entity>              enemies;
   private LinkedList<Entity>              playerShots;
   private LinkedList<Entity>              enemyShots;
+  // TODO: Possibly add a power-up entity list. 
 
-  // Used for keeping track of time that elapsed between game loop iterations
+  // Used for keeping track of time (in ms) that elapsed between game loop iterations
   long                                    lastLoopTime;
   long                                    currentLoopTime;
   protected double                        delta;
 
-  // Variables to indicate which entity lists to clean up (remove dead entities)
+  // Flags to indicate which entity lists to clean up (remove dead entities) during game play.
   private boolean                         cleanEnemyShotsEntityList;
   private boolean                         cleanPlayerShotsEntityList;
   private boolean                         cleanEnemiesEntityList;
 
-  // Statistics Variables for game loop
-  long                                    numberOfCollisionComparisons;
-  private long                            frameCount;
-  private long                            frameRate;
+  // Statistics variables for game loop
+  private long                            frameCount;                                         // Tracks the number of frames that occur each second  
+  private long                            frameRate;                                          // used to display the current frame rate when debugging is enabled
 
+  /*
+   * Used to render the screen.
+   *
+   * NOTE: An instance of the interface IRender, which contains the method renderScreen(). This 
+   *       method, invoked by the game loop , is responsible for rendering each frame. Since the 
+   *       game engine does not know the type of Java application in which it will be used, it
+   *       does not know how to render a game frame. This is why an interface is used in this 
+   *       case. The game engine knows that when it calls the interface method renderScreen(),
+   *       the current frame of the game loop will be rendered to the screen without knowing how 
+   *       the rendering will happen.
+   */
   private IRender                         screenRenderer;
-
-  private BufferStrategy                  bs;                                              // Used to render the screen insteasd of the built in paint/paintComponent methods 
+  protected int                           screenWidth, screenHeight;
 
   // Debug Variables
   public boolean                          displayDebugInfo = false;
-  private DecimalFormat                   nanoFormat       = new DecimalFormat("0.000000");  // this will helps you to always keeps in two decimal places
+  private DecimalFormat                   decimalPlaces9   = new DecimalFormat("0.000000000");
 
   public GameEngine(IRender renderer)
   {
-    screenRenderer = renderer;
+    this(renderer, 800, 600);
+    //this(renderer, GameEngineConstants.DEFAULT_CANVAS_WIDTH, GameEngineConstants.DEFAULT_CANVAS_HEIGHT);
   }
 
+  public GameEngine(IRender renderer, int userDefinedScreenWidth, int userDefinedScreenHeight)
+  {
+    screenRenderer = renderer;
+//    screenWidth = GameEngineConstants.DEFAULT_CANVAS_WIDTH;
+//    screenHeight = GameEngineConstants.DEFAULT_CANVAS_HEIGHT;
+    screenWidth = userDefinedScreenWidth;
+    screenHeight = userDefinedScreenHeight;
+  }
+  
   /////////////////////////////////////////////////////////////////////////////
   //      _    _         _                  _     __  __      _   _               _     
   //     / \  | |__  ___| |_ _ __ __ _  ___| |_  |  \/  | ___| |_| |__   ___   __| |___ 
@@ -119,7 +137,6 @@ public abstract class GameEngine
   //    
   /////////////////////////////////////////////////////////////////////////////
 
-  // DONE
   /*
    * The main game loop for this game engine
    */
@@ -130,12 +147,12 @@ public abstract class GameEngine
     // Call the user game start method to execute any user specific logic before the game loop begins   
     userGameStart();
 
-    // Variables to computer the delta
-    lastLoopTime = System.currentTimeMillis();
+    // Used to determine amount of time that update and render operations took so the appropriate sleep time can be computed for current game loop iteration.
+    long beginLoopTime, endLoopTime;
 
     // Game loop
     long frameRateCountStartTime = System.currentTimeMillis();
-    long beginLoopTime, endLoopTime;
+    lastLoopTime = System.currentTimeMillis();      // Used to computer the delta
     while (gameRunning)
     {
       // Record the start time of the current loop iteration. This will be used to compute the time taken for the 
@@ -147,7 +164,7 @@ public abstract class GameEngine
       // The result (called the delta) will be used in updating each entity's position to ensure smoother animations
       // if the time between loop iterations varies greatly.
       currentLoopTime = System.currentTimeMillis();
-      delta = (currentLoopTime - lastLoopTime) * 0.001; // The 0.001 converts the time in ms to seconds
+      delta = (currentLoopTime - lastLoopTime) * GameEngineConstants.MILLI_TO_BASE; // The 0.001 converts the time in ms to seconds
       lastLoopTime = currentLoopTime;
 
       // This section serves two purposes, 1) measure the games frame rate (mostly used for debugging purposes
@@ -160,6 +177,10 @@ public abstract class GameEngine
         frameCount = 0;
 
         // Clear any dead entities from the entity lists
+        // NOTE: For this to happen the programmer must set the clean enemies, clean player shots and clean enemy 
+        //       shots flags using the respective methods. If not, as game play progresses the speed of the game 
+        //       may be severely slowed down since the engine will need to iterate through the different entity 
+        //       lists that may contain dead entities. 
         removeDeadEntities();
 
         // Reset the frame rate count start time
@@ -180,10 +201,9 @@ public abstract class GameEngine
       if (!gamePaused)
       {
         gameUpdate(delta);
-        //gameUpdate(1);  // NOTE: If we switch to a variable frame rate game loop, then this update method will need to be called.
       }
 
-      // Update the display with the newly computed positions of each entity 
+      // Update the display with the current entity lists 
       screenRenderer.renderScreen();
 
       // Record the end time of the current loop iteration and compute the time taken for the update and render operations.
@@ -196,6 +216,8 @@ public abstract class GameEngine
       // sleeping this game loop iteration. 
       if (updateAndRenderLoopTime > GameEngineConstants.DEFAULT_UPDATE_PERIOD)
       {
+        // This is an indication I left in during development to alert me if the game loop is taking too much time for the 
+        // render and update operations. This may be commented out when your game is ready for production releases.
         System.out.println("Update and Render Took Too Much Time, Skipping sleeping this game loop iteration.");
       }
       else
@@ -203,12 +225,10 @@ public abstract class GameEngine
         try
         {
           // Compute the amount of time to sleep. Note that the measured time is in nano seconds and must be converted to milliseconds for the sleep operation.
-          loopSleepTime = (long) ((GameEngineConstants.DEFAULT_UPDATE_PERIOD - updateAndRenderLoopTime) * 0.000001);
-          //System.out.println("loopSleepTime : " + nanoFormat.format(loopSleepTime));
+          loopSleepTime = (long) ((GameEngineConstants.DEFAULT_UPDATE_PERIOD - updateAndRenderLoopTime) * GameEngineConstants.NANO_TO_MILLI);
 
           // Provides the necessary delay and also yields control so that other threads can do work.
           Thread.sleep(loopSleepTime);
-          //Thread.sleep(1);
         }
         catch (InterruptedException ex)
         {
@@ -245,7 +265,7 @@ public abstract class GameEngine
      *  Initialize all entities
      */
     player = new Entity(GameEngineConstants.EntityTypes.PLAYER);
-    player.setPosition(GameEngineConstants.DEFAULT_CANVAS_WIDTH / 2, GameEngineConstants.DEFAULT_CANVAS_HEIGHT / 2);
+    player.setPosition(screenWidth / 2, screenHeight / 2);
     player.setVelocity(0.0, 0.0);
     player.setAlive(false);
     player.setVisible(false);
@@ -486,7 +506,7 @@ public abstract class GameEngine
   {
     // Clear the background to avoid trailers
     g.setBackground(GameEngineConstants.DEFAULT_BACKGROUND_COLOR);  // may use an image for background    
-    g.fillRect(0, 0, GameEngineConstants.DEFAULT_CANVAS_WIDTH, GameEngineConstants.DEFAULT_CANVAS_HEIGHT);
+    g.fillRect(0, 0, screenWidth, screenHeight);
 
     /*
      * Draw any user specific items before the entity lists are drawn to the screen 
@@ -756,8 +776,6 @@ public abstract class GameEngine
   private void displayDebugInfo(Graphics2D g) // Changed from graphics
   {
     int line = 300;
-    DecimalFormat probf = new DecimalFormat("0.000000000");  // this will helps you to always keeps in two decimal places
-    //  g.drawString("UFO Probability: " + probf.format(ufoEntityManager.getProbability()), 560, line);
 
     g.setFont(new Font("Dialog", Font.PLAIN, 14));
     g.setColor(Color.WHITE);
@@ -769,13 +787,11 @@ public abstract class GameEngine
     line += 16;
     g.drawString("Num Player Shots: " + playerShots.size(), 20, line);
     line += 16;
-    g.drawString("Num Comparisons: " + numberOfCollisionComparisons, 20, line);
-    line += 16;
-    g.drawString("Delta: " + delta, 20, line);
+    g.drawString("Delta: " + decimalPlaces9.format(delta), 20, line);
     line += 16;
     g.drawString("DEFAULT_UPDATE_PERIOD: " + GameEngineConstants.DEFAULT_UPDATE_PERIOD, 20, line);
     line += 16;
-    g.drawString("Delta Loop Time: " + probf.format(updateAndRenderLoopTime * 0.000001), 20, line);
+    g.drawString("Delta Loop Time: " + decimalPlaces9.format(updateAndRenderLoopTime * GameEngineConstants.NANO_TO_MILLI), 20, line);
     line += 16;
     g.drawString("Loop Sleep Time: " + loopSleepTime, 20, line);
   }

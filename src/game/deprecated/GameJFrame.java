@@ -107,6 +107,8 @@ public abstract class GameJFrame extends JFrame
   private BufferStrategy                         bs;                                              // Used to render the screen insteasd of the built in paint/paintComponent methods 
   public GameCanvas                              screen;                                          // Handle for the custom drawing panel
 
+  protected int                                  screenWidth = 800, screenHeight = 600;
+  
   // Constructor to initialize the UI components and game objects
   public GameJFrame()
   {
@@ -120,7 +122,7 @@ public abstract class GameJFrame extends JFrame
 
     // Setup the JFrame and panel used in this game
     screen = new GameCanvas();
-    screen.setPreferredSize(new Dimension(GameEngineConstants.DEFAULT_CANVAS_WIDTH, GameEngineConstants.DEFAULT_CANVAS_HEIGHT));
+    screen.setPreferredSize(new Dimension(screenWidth, screenHeight));
     //screen.setIgnoreRepaint(true); // Only required if BufferStrategy is used
     this.setContentPane(screen);
     this.pack();
@@ -336,7 +338,7 @@ public abstract class GameJFrame extends JFrame
      *  Initialize all entities
      */
     player = new Entity(GameEngineConstants.EntityTypes.PLAYER);
-    player.setPosition(GameEngineConstants.DEFAULT_CANVAS_WIDTH / 2, GameEngineConstants.DEFAULT_CANVAS_HEIGHT / 2);
+    player.setPosition(screenWidth / 2, screenHeight / 2);
     player.setVelocity(0.0, 0.0);
     player.setAlive(false);
     player.setVisible(false);
@@ -596,7 +598,7 @@ public abstract class GameJFrame extends JFrame
   {
     // Clear the background to avoid trailers
     setBackground(GameEngineConstants.DEFAULT_BACKGROUND_COLOR);  // may use an image for background
-    g.fillRect(0, 0, GameEngineConstants.DEFAULT_CANVAS_WIDTH, GameEngineConstants.DEFAULT_CANVAS_HEIGHT);
+    g.fillRect(0, 0, screenWidth, screenHeight);
 
     /*
      * Draw any user specific items before the entity lists are drawn to the screen 

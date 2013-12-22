@@ -1,5 +1,6 @@
-package game.framework.entities;
+package game.underdevelopment.entities;
 
+import game.framework.entities.Entity;
 import game.framework.utilities.GameEngineConstants;
 
 import java.awt.Color;
@@ -35,7 +36,7 @@ public class EntityShape extends Entity
     // Set the affine transform for the image
     //    at = AffineTransform.getTranslateInstance(position.x, position.y);
 
-    this(s, GameEngineConstants.DEFAULT_CANVAS_WIDTH / 2 - width / 2, GameEngineConstants.DEFAULT_CANVAS_HEIGHT / 2 - height / 2, height, width, c, type);
+    this(s, 0, 0, height, width, c, type);
   }
 
   public EntityShape(Shape s, int x, int y, int height, int width, Color c, GameEngineConstants.EntityTypes type)

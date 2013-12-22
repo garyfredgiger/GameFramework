@@ -54,8 +54,14 @@ public class EntityImage extends Entity
     // Assign the image, set the dimensions and the default position
     this.image = image;
     this.setDimensions(this.image.getWidth(imageObserver), this.image.getHeight(imageObserver));
-    position.x = GameEngineConstants.DEFAULT_CANVAS_WIDTH / 2 - width / 2;
-    position.y = GameEngineConstants.DEFAULT_CANVAS_HEIGHT / 2 - height / 2;
+    
+    // NOTE: Since entities have no knowledge of the display environment, this code should not exist in here.
+//    position.x = GameEngineConstants.DEFAULT_CANVAS_WIDTH / 2 - width / 2;
+//    position.y = GameEngineConstants.DEFAULT_CANVAS_HEIGHT / 2 - height / 2;
+
+    // Start the entity in the upper left corner of the display by default
+    position.x = 0;
+    position.y = 0;
 
     // Set the affine transform for the image
     at = AffineTransform.getTranslateInstance(position.x, position.y);
@@ -121,8 +127,15 @@ public class EntityImage extends Entity
     while (getImage().getWidth(imageObserver) <= 0);
 
     this.setDimensions(this.image.getWidth(imageObserver), this.image.getHeight(imageObserver));
-    position.x = GameEngineConstants.DEFAULT_CANVAS_WIDTH / 2 - width / 2;
-    position.y = GameEngineConstants.DEFAULT_CANVAS_HEIGHT / 2 - height / 2;
+
+    // NOTE: Since entities have no knowledge of the display environment, this code should not exist in here.
+//    position.x = GameEngineConstants.DEFAULT_CANVAS_WIDTH / 2 - width / 2;
+//    position.y = GameEngineConstants.DEFAULT_CANVAS_HEIGHT / 2 - height / 2;
+
+    // Start the entity in the upper left corner of the display by default
+    position.x = 0;
+    position.y = 0;
+
     at = AffineTransform.getTranslateInstance(position.x, position.y);
   }
 
