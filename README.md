@@ -3,6 +3,8 @@ GameFramework
 
 A Java based game framework on which I am working. This is a pet project of mine to see if I can develop an easy to use game framework for myself and others to use to create classic 2D arcade games. This version of the game framework appears to be stable and I have used it to create one game, a clone of the classic arcade game Space Invaders. The GitHub repo for this game can be viewed *[here](https://github.com/garyfredgiger/SpaceInvadersClone.git)*. As I get more time, I plan on using this game framework to develop additional classic arcade games including an Asteroids clone, a Robotron clone and a Pac-Man style clone.
 
+I also started to put together a set of *[tutorials](https://github.com/garyfredgiger/GameFrameworkTutorials.git)* that show how to use this framework. There are only a few tutorials that show basic concepts such as creating an empty game project and adding a player entity that you can control. As I get more time I will add more tutorials that show how to create a simple game. For a more complete example of how this framework can be leveraged to create a full game, refer to the Space Invaders clone mentioned above.
+
 Long Term Goals:
 
 <ul>
