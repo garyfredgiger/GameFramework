@@ -66,17 +66,27 @@ public abstract class GameEngine
 
   public GameEngine(IRender renderer)
   {
-    this(renderer, 800, 600);
-    //this(renderer, GameEngineConstants.DEFAULT_CANVAS_WIDTH, GameEngineConstants.DEFAULT_CANVAS_HEIGHT);
+    this(renderer, GameEngineConstants.DEFAULT_CANVAS_WIDTH, GameEngineConstants.DEFAULT_CANVAS_HEIGHT);
   }
 
   public GameEngine(IRender renderer, int userDefinedScreenWidth, int userDefinedScreenHeight)
   {
     screenRenderer = renderer;
-//    screenWidth = GameEngineConstants.DEFAULT_CANVAS_WIDTH;
-//    screenHeight = GameEngineConstants.DEFAULT_CANVAS_HEIGHT;
-    screenWidth = userDefinedScreenWidth;
-    screenHeight = userDefinedScreenHeight;
+    
+    // Check that the default screen width and height are not zero or negative
+    if ((userDefinedScreenWidth <= 0) || (userDefinedScreenHeight <= 0))
+    {
+      // If either screen dimensions are either 0 or negative, then use the default screen width and height.
+      System.out.println("Warning: Either the user defined screen width or height is zero or negative (" + userDefinedScreenWidth + ", " + userDefinedScreenHeight + "). Reverting to default screen width and height (" + GameEngineConstants.DEFAULT_CANVAS_WIDTH + ", " + GameEngineConstants.DEFAULT_CANVAS_HEIGHT+ ").");
+
+      screenWidth = GameEngineConstants.DEFAULT_CANVAS_WIDTH;
+      screenHeight = GameEngineConstants.DEFAULT_CANVAS_HEIGHT;
+    }
+    else
+    {
+      screenWidth = userDefinedScreenWidth;
+      screenHeight = userDefinedScreenHeight;
+    }
   }
   
   /////////////////////////////////////////////////////////////////////////////
