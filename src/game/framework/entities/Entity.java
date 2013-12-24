@@ -282,6 +282,15 @@ public class Entity implements Cloneable
   /////////////////////////////////////////////////////////////////////////////
 
   /*
+   * Get the color of the entity
+   */
+  // NOTE: Specific to shape entities
+  public Color getColor()
+  {
+    return color;
+  }
+  
+  /*
    * Returns the width of the entity
    */
   // NOTE: All Entities will have dimensions

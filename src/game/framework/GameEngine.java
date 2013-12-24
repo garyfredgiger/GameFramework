@@ -562,6 +562,11 @@ public abstract class GameEngine
     userGamePostDraw(g);
   }
 
+  public void exitGame()
+  {
+    gameRunning = false;
+  }
+
   /////////////////////////////////////////////////////////////////////////////
   //    ____                        ____                      
   //   / ___| __ _ _ __ ___   ___  |  _ \ __ _ _   _ ___  ___ 
@@ -617,7 +622,7 @@ public abstract class GameEngine
   /*
    * Add entities
    */
-  public void addEnemy(Entity entity)
+  public final void addEnemy(Entity entity)
   {
     addEntity(entity, GameEngineConstants.EntityTypes.ENEMY, enemies);
   }
