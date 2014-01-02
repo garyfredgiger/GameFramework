@@ -110,6 +110,21 @@ public class GameUtility
     return unitVelocity.createUnitVector();
   }
 
+  public static Vector2D computeVectorBetweenTwoPositions(Position2D fromPosition, Position2D toPosition)
+  {
+    Vector2D fromVector = new Vector2D(fromPosition.x, fromPosition.y);
+    Vector2D toVector = new Vector2D(toPosition.x, toPosition.y);
+
+    toVector.subtract(fromVector);
+
+    return toVector;
+  }
+
+  public static Vector2D computeUnitVectorBetweenTwoPositions(Position2D fromPosition, Position2D toPosition)
+  {
+    return computeVectorBetweenTwoPositions(fromPosition, toPosition).createUnitVector();
+  }
+
   /*
    *  Pad an integer with zeros. This can be used in situations where fixed width 
    *  numbers make display look aesthetically pleasing (e.g., when current level

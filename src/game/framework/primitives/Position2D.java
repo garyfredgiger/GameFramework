@@ -100,7 +100,7 @@ public class Position2D
   {
     set(0, 0);
   }
-  
+
   /**
    * Return this Vector's String representation.
    */
