@@ -30,6 +30,8 @@ public abstract class GameEngine
   private LinkedList<Entity>              enemies;
   private LinkedList<Entity>              playerShots;
   private LinkedList<Entity>              enemyShots;
+  private LinkedList<Entity>              powerups;
+  
   // TODO: Possibly add a power-up entity list. 
 
   // Used for keeping track of time (in ms) that elapsed between game loop iterations
@@ -41,6 +43,7 @@ public abstract class GameEngine
   private boolean                         cleanEnemyShotsEntityList;
   private boolean                         cleanPlayerShotsEntityList;
   private boolean                         cleanEnemiesEntityList;
+  private boolean                         cleanPowerupsEntityList;
 
   // Statistics variables for game loop
   private long                            frameCount;                                         // Tracks the number of frames that occur each second  
@@ -283,6 +286,7 @@ public abstract class GameEngine
     enemies = new LinkedList<Entity>();
     playerShots = new LinkedList<Entity>();
     enemyShots = new LinkedList<Entity>();
+    powerups = new LinkedList<Entity>();
 
     /*
      *  Set default values
@@ -398,6 +402,19 @@ public abstract class GameEngine
       userGameUpdateEntity(currentEntity);
     }
 
+    // Update positions for the powerups 
+    for (int i = 0; i < powerups.size(); i++)
+    {
+      // Update the entity
+      Entity currentPowerup = powerups.get(i);
+      currentPowerup.updatePosition(delta);
+      currentPowerup.updateRotation(delta);
+      currentPowerup.updateLifetime();
+
+      // Call the user defined method to perform any specific updates on each sprite
+      userGameUpdateEntity(currentPowerup);
+    }
+    
     /*
     * Update the player
     */
@@ -486,13 +503,29 @@ public abstract class GameEngine
     }
 
     /*
+     * Third, Compare the powerups vector with the player 
+     */
+    for (int powerupIndex = 0; powerupIndex < powerups.size(); powerupIndex++)
+      {
+        Entity currentPowerup = (Entity) powerups.get(powerupIndex);
+
+        if (currentPowerup.isAlive())
+        {
+          // If the player collides with 
+          if (player.collidesWith(currentPowerup.getBoundingRectangle()))
+          {
+            userHandleEntityCollision(player, currentPowerup);
+            break;
+          }
+        }
+      }
+
+    /*
      *  Last, compare the player sprite with all enemies to check for any collisions
      */
     for (int enemyIndex = 0; enemyIndex < enemies.size(); enemyIndex++)
-    //for (int enemyIndex = 0; enemyIndex < entities.size(); enemyIndex++)
     {
       Entity currentEnemy = (Entity) enemies.get(enemyIndex);
-      //Entity currentEnemy = (Entity) entities.get(enemyIndex);
 
       if (currentEnemy.isAlive())
       {
@@ -556,6 +589,13 @@ public abstract class GameEngine
       currentPlayerShot.draw(g);
     }
 
+    // Draw the powerups 
+    for (int i = 0; i < powerups.size(); i++)
+    {
+      Entity currentPowerup = powerups.get(i);
+      currentPowerup.draw(g);
+    }
+    
     // Draw the player
     player.draw(g);
 
@@ -637,6 +677,11 @@ public abstract class GameEngine
     addEntity(entity, GameEngineConstants.EntityTypes.ENEMY_SHOT, enemyShots);
   }
 
+  public void addPowerup(Entity entity)
+  {
+    addEntity(entity, GameEngineConstants.EntityTypes.POWER_UP, powerups);
+  }
+
   private void addEntity(Entity entity, GameEngineConstants.EntityTypes type, LinkedList<Entity> entityList)
   {
     // Set the type of the enemy
@@ -670,6 +715,11 @@ public abstract class GameEngine
     return playerShots;
   }
 
+  public LinkedList<Entity> getPowerups()
+  {
+    return powerups;
+  }
+
   /*
    * Clear the different entity lists
    */
@@ -688,6 +738,11 @@ public abstract class GameEngine
     playerShots.clear();
   }
 
+  public void clearPowerups()
+  {
+    powerups.clear();
+  }
+  
   public void resetEntityLists()
   {
     clearEnemies();
@@ -723,11 +778,21 @@ public abstract class GameEngine
     cleanPlayerShotsEntityList = true;
   }
 
-  public void toNotRemoveDeadPlayerShotsFromEntityList()
+  public void doNotRemoveDeadPlayerShotsFromEntityList()
   {
     cleanPlayerShotsEntityList = false;
   }
 
+  public void removeDeadPowerupsFromEntityList()
+  {
+    cleanPowerupsEntityList = true;
+  }
+
+  public void doNotRemoveDeadPowerupsFromEntityList()
+  {
+    cleanPowerupsEntityList = false;
+  }
+  
   // DONE
   /*
    * If the flags are specified, remove the dead entities from the respective entitiy lists.
@@ -747,6 +812,11 @@ public abstract class GameEngine
     if (cleanEnemiesEntityList)
     {
       removeDeadEntitiesFromEntityList(enemies);
+    }
+
+    if (cleanPowerupsEntityList)
+    {
+      removeDeadEntitiesFromEntityList(powerups);
     }
   }
 
@@ -801,6 +871,8 @@ public abstract class GameEngine
     g.drawString("Num Enemy Shots: " + enemyShots.size(), 20, line);
     line += 16;
     g.drawString("Num Player Shots: " + playerShots.size(), 20, line);
+    line += 16;
+    g.drawString("Num Powerup: " + powerups.size(), 20, line);
     line += 16;
     g.drawString("Delta: " + decimalPlaces9.format(delta), 20, line);
     line += 16;

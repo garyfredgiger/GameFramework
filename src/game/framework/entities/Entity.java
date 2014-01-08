@@ -5,7 +5,6 @@ import game.framework.primitives.Vector2D;
 import game.framework.utilities.GameEngineConstants;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
@@ -105,7 +104,21 @@ public class Entity implements Cloneable
     lifeAge = 0;
 
     // Make the entity alive and visible
-    reset();
+    //this.reset();
+    
+    /*
+     *  NOTE: Rather than calling the method reset() to set both the flags alive and visible, they will be set individually.
+     *        The reason? Well, if a subclass extends this method, overrides the reset() method and references an object in 
+     *        the reset method, a null pointer exception will occur even if the object is instantiated inside of the
+     *        subclass's constructor. Why? Well, java requires that the parent class's constructor be called first inside of
+     *        the sub classes constructor. Since in this case this constructor calls the reset() method and since the subclass
+     *        overrides the reset() method, the inner most instance of the reset() method is called first (in this case the
+     *        sub class's overriden reset() method). When the subclass's reset() method is called first from within the parent
+     *        class's constructor, it references the object in the subclass before it can be instantiated in the suclass's
+     *        constructor.
+     */       
+    this.visible = true;
+    this.alive = true;
   }
 
   /////////////////////////////////////////////////////////////////////////////  
@@ -175,6 +188,10 @@ public class Entity implements Cloneable
   /*
    * Position setters
    */
+  public void setPosition(Position2D p)
+  {
+    position.set(p);
+  }
 
   /*
    * Sets the entity's position using doubles for both the X and Y components

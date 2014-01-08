@@ -15,6 +15,7 @@ public class EntityImage extends Entity
   protected ImageObserver   imageObserver;
   protected AffineTransform at;
 
+  // TODO: Possibly remove the EntityTypes parameter
   public EntityImage(ImageObserver imageObserver, GameEngineConstants.EntityTypes type)
   {
     super();
@@ -56,12 +57,10 @@ public class EntityImage extends Entity
     this.setDimensions(this.image.getWidth(imageObserver), this.image.getHeight(imageObserver));
     
     // NOTE: Since entities have no knowledge of the display environment, this code should not exist in here.
-//    position.x = GameEngineConstants.DEFAULT_CANVAS_WIDTH / 2 - width / 2;
-//    position.y = GameEngineConstants.DEFAULT_CANVAS_HEIGHT / 2 - height / 2;
 
     // Start the entity in the upper left corner of the display by default
-    position.x = 0;
-    position.y = 0;
+    //position.x = 0;
+    //position.y = 0;
 
     // Set the affine transform for the image
     at = AffineTransform.getTranslateInstance(position.x, position.y);
