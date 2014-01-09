@@ -103,9 +103,7 @@ public class Entity implements Cloneable
     lifeSpan = 0;
     lifeAge = 0;
 
-    // Make the entity alive and visible
-    //this.reset();
-    
+    // Make the entity alive and visible    
     /*
      *  NOTE: Rather than calling the method reset() to set both the flags alive and visible, they will be set individually.
      *        The reason? Well, if a subclass extends this method, overrides the reset() method and references an object in 
@@ -117,6 +115,7 @@ public class Entity implements Cloneable
      *        class's constructor, it references the object in the subclass before it can be instantiated in the suclass's
      *        constructor.
      */       
+    //this.reset();
     this.visible = true;
     this.alive = true;
   }
@@ -432,6 +431,11 @@ public class Entity implements Cloneable
     return rotationRate;
   }
 
+  public Position2D getCenter()
+  {
+    return new Position2D(getCenterX(), getCenterY());
+  }
+  
   /**
    * Returns the x component of the center of the image to the caller.
    * 
