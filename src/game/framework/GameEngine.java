@@ -11,6 +11,15 @@ import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+/*
+ * 
+ * "We should forget about small efficiencies, say about 97% of the time: premature optimization 
+ * is the root of all evil." The performance of instanceof probably won't be an issue, so don't 
+ * waste your time coming up with exotic workarounds until you're sure that's the problem.
+ * 
+ *                                                            - Donald Knuth
+ */
+
 public abstract class GameEngine
 {
   /*
