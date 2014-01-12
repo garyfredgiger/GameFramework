@@ -55,7 +55,7 @@ public class EntityImage extends Entity
     // Assign the image, set the dimensions and the default position
     this.image = image;
     this.setDimensions(this.image.getWidth(imageObserver), this.image.getHeight(imageObserver));
-    
+
     // NOTE: Since entities have no knowledge of the display environment, this code should not exist in here.
 
     // Start the entity in the upper left corner of the display by default
@@ -122,20 +122,29 @@ public class EntityImage extends Entity
 
     // TODO: The image store should go here to reduce the overhead of loading the images from files each and everytime.s
 
-    image = tk.getImage(getURL(filename));
-    while (getImage().getWidth(imageObserver) <= 0);
+    try
+    {
+      image = tk.getImage(getURL(filename));
+      
+      if (image == null)
+      {
+        throw new NullPointerException("Image with filename ' + filename + ' could not be loaded.");
+      }
+      
+      while (getImage().getWidth(imageObserver) <= 0);
 
-    this.setDimensions(this.image.getWidth(imageObserver), this.image.getHeight(imageObserver));
+      this.setDimensions(this.image.getWidth(imageObserver), this.image.getHeight(imageObserver));
 
-    // NOTE: Since entities have no knowledge of the display environment, this code should not exist in here.
-//    position.x = GameEngineConstants.DEFAULT_CANVAS_WIDTH / 2 - width / 2;
-//    position.y = GameEngineConstants.DEFAULT_CANVAS_HEIGHT / 2 - height / 2;
+      // Start the entity in the upper left corner of the display by default
+      position.x = 0;
+      position.y = 0;
 
-    // Start the entity in the upper left corner of the display by default
-    position.x = 0;
-    position.y = 0;
-
-    at = AffineTransform.getTranslateInstance(position.x, position.y);
+      at = AffineTransform.getTranslateInstance(position.x, position.y);
+    }
+    catch (NullPointerException e)
+    {
+      System.out.println(e.getMessage());
+    }
   }
 
   private URL getURL(String filename)

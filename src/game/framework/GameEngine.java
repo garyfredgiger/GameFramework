@@ -587,8 +587,16 @@ public abstract class GameEngine
     // Draw the enemies 
     for (int i = 0; i < enemies.size(); i++)
     {
-      Entity currentEntity = enemies.get(i);
+      try
+      {
+      Entity currentEntity = enemies.get(i);      
       currentEntity.draw(g);
+      }
+      catch(NullPointerException e)
+      {
+        System.out.println("One of the enemies in the enemies LinkedList<Entity> was null");
+        System.out.println(e.getMessage());
+      }
     }
 
     // Draw the player shots 
