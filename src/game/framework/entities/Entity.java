@@ -4,7 +4,6 @@ import game.framework.primitives.Position2D;
 import game.framework.primitives.Vector2D;
 import game.framework.utilities.GameEngineConstants;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
@@ -34,14 +33,11 @@ public class Entity implements Cloneable
   /*
    *  Class instance variables
    */
-
-  // Variables that are common for both images and shapes
+  
+  // Variables that are common for all entities 
   private static int                        nextId              = 0;  // Used to assign a unique id to each entity that is created 
   protected int                             entityId            = 0;  // Every entity should have an id
 
-  // TODO: Should the position be its own class Point rather than using Vector2D?
-  protected int                             width, height;            // These will likely stay here since both images and shapes have a width and height
-  //protected Vector2D                        position, velocity;       // This will likely stay here since an entity needs to exist somewhere on the screen.
   protected Position2D                      position;
   protected Vector2D                        velocity;                 // This will likely stay here since an entity needs to exist somewhere on the screen.
 
@@ -55,11 +51,8 @@ public class Entity implements Cloneable
 
   protected int                             lifeSpan, lifeAge;
 
-  // Variables that only apply to shapes
-  protected Color                           color;                             // TODO: This will likely end up in a sub class when the entity class is broken up into two sub classes, imageEntity and shapeEntity
-
   // DEBUG VARIABLES
-  private boolean                           showDirectionVector = true;
+//  private boolean                           showDirectionVector = true;
 
   /////////////////////////////////////////////////////////////////////////////  
   //    ____                _                   _                 
@@ -83,14 +76,6 @@ public class Entity implements Cloneable
    */
   public Entity(GameEngineConstants.EntityTypes type)
   {
-    // TODO: Since color only applies to shapes, this may need to be moved into a sub class when images are introduced into the entities
-    color = Color.RED;
-
-    // TODO: Since both shapes and images have a width and height, these may need to be set to zero here and defined in sub classes (for image entity, when images is loaded the width and height can implicitly be assigned)
-    // TODO: Should these be set to zero by default, then defined either in the subclass or by the programmer
-    width = GameEngineConstants.DEFAULT_ENTITY_WIDTH;
-    height = GameEngineConstants.DEFAULT_ENTITY_HEIGHT;
-
     // NOTE: Since every image and shape will have a position and velocity, these will likely stay in this class.
     position = new Position2D();  // This will need to be changed
     velocity = new Vector2D();
@@ -128,25 +113,6 @@ public class Entity implements Cloneable
   //  |____/ \___|\__|\__\___|_|  |___/
   //                                   
   /////////////////////////////////////////////////////////////////////////////
-
-  /*
-   * Set the color of the entity
-   */
-  // NOTE: Specific to shape entities
-  public void setColor(Color c)
-  {
-    color = c;
-  }
-
-  /*
-   * Set the dimensions of the entity
-   */
-  // NOTE: Both images and shapes will have dimensions
-  public void setDimensions(int w, int h)
-  {
-    width = w;
-    height = h;
-  }
 
   /*
    * Set the alive status of the entity
@@ -298,33 +264,6 @@ public class Entity implements Cloneable
   /////////////////////////////////////////////////////////////////////////////
 
   /*
-   * Get the color of the entity
-   */
-  // NOTE: Specific to shape entities
-  public Color getColor()
-  {
-    return color;
-  }
-  
-  /*
-   * Returns the width of the entity
-   */
-  // NOTE: All Entities will have dimensions
-  public int getWidth()
-  {
-    return width;
-  }
-
-  /*
-   * Returns the height of the entity
-   */
-  // NOTE: All Entities will have dimensions
-  public int getHeight()
-  {
-    return height;
-  }
-
-  /*
    * Returns the ID of the entity. When a new entity is created, it is assigned a unique ID.
    */
   // NOTE: All Entities will have an ID
@@ -431,31 +370,6 @@ public class Entity implements Cloneable
     return rotationRate;
   }
 
-  public Position2D getCenter()
-  {
-    return new Position2D(getCenterX(), getCenterY());
-  }
-  
-  /**
-   * Returns the x component of the center of the image to the caller.
-   * 
-   * @return The x component of the image center
-   */
-  public double getCenterX()
-  {
-    return position.x + (width / 2);
-  }
-
-  /**
-   * Returns the y component of the center of the image to the caller.
-   * 
-   * @return The y component of the image center
-   */
-  public double getCenterY()
-  {
-    return position.y + (height / 2);
-  }
-
   public int getLifespan()
   {
     return lifeSpan;
@@ -521,27 +435,6 @@ public class Entity implements Cloneable
   {
     setAlive(true);
     setVisible(true);
-  }
-
-  /*
-   *  Get the current bounding rectangle of the entity based on the entity's position
-   */
-  // NOTE: All entities will have a bounding rectangle
-  public Rectangle getBoundingRectangle()
-  {
-    return new Rectangle((int) position.x, (int) position.y, width, height);
-  }
-
-  /*
-   * Checks if this this entities bounding rectangle intersects with the other entities bounding rectangle.
-   * 
-   * True is returned if both rectangles intersect (a collision).
-   * False is returned otherwise.
-   */
-  // NOTE: All entities will need to be tested for collisions
-  public boolean collidesWith(Rectangle otherEntityBoundingRectangle)
-  {
-    return (otherEntityBoundingRectangle.intersects(getBoundingRectangle()));
   }
 
   /*
@@ -642,17 +535,17 @@ public class Entity implements Cloneable
   // NOTE: This will be entity type dependent given that an entity can be a shape or an image
   public void draw(Graphics2D g)  // Changed from graphics 
   {
-    if (isAlive() && isVisible())
-    {
-      g.setColor(color);
-
-      //      if (showDirectionVector)
-      //      {
-      //        g.drawLine((int)getCenterX(), (int)getCenterY(), (int)(getCenterX() + velocity.x), (int)(getCenterY() + velocity.y));
-      //      }
-
-      g.fillRect((int) position.x, (int) position.y, width, height);
-    }
+//    if (isAlive() && isVisible())
+//    {
+//      g.setColor(color);
+//
+//      //      if (showDirectionVector)
+//      //      {
+//      //        g.drawLine((int)getCenterX(), (int)getCenterY(), (int)(getCenterX() + velocity.x), (int)(getCenterY() + velocity.y));
+//      //      }
+//
+//      g.fillRect((int) position.x, (int) position.y, width, height);
+//    }
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -673,9 +566,6 @@ public class Entity implements Cloneable
     entitySnapshot += "EntityType: " + entityType + "\n";
     entitySnapshot += "Alive: " + alive + "\n";
     entitySnapshot += "Visible: " + visible + "\n";
-    entitySnapshot += "Width: " + width + "\n";
-    entitySnapshot += "Height: " + height + "\n";
-    entitySnapshot += "Color: " + color + "\n";
     entitySnapshot += "Position: " + position + "\n";
     entitySnapshot += "Velocity: " + velocity + "\n";
     entitySnapshot += "Face Angle: " + faceAngle + "\n";

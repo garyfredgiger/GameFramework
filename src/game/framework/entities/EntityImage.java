@@ -9,7 +9,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.ImageObserver;
 import java.net.URL;
 
-public class EntityImage extends Entity
+public class EntityImage extends Entity2D
 {
   protected Image           image;        // Image to display
   protected ImageObserver   imageObserver;
