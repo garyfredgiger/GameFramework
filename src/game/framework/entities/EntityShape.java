@@ -14,17 +14,22 @@ public class EntityShape extends Entity2D
    */
   public EntityShape()
   {
-    this(GameEngineConstants.EntityTypes.UNDEFINED);
+    this(GameEngineConstants.EntityTypes.UNDEFINED, Color.RED);
   }
 
-  /*
-   * Constructor specifying the type of the entity
-   */
   public EntityShape(GameEngineConstants.EntityTypes type)
+  {
+    this(GameEngineConstants.EntityTypes.UNDEFINED, Color.RED);
+  }
+  
+  /*
+   * Constructor specifying the type and color of the shape entity
+   */
+  public EntityShape(GameEngineConstants.EntityTypes type, Color color)
   {
     super(type);
 
-    color = Color.RED;
+    this.color = color;
   }
   
   /*

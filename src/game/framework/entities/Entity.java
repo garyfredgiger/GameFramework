@@ -20,6 +20,7 @@ import java.awt.Rectangle;
  */
 
 // TODO: Should the Entity class be re-factored so the notion of position, velocity, visible, alive and update logic are separate from the render logic? Reason, images and shapes need to be rendered differently
+// The answer is YES
 
 public class Entity implements Cloneable
 {
@@ -38,6 +39,7 @@ public class Entity implements Cloneable
   private static int                        nextId              = 0;  // Used to assign a unique id to each entity that is created 
   protected int                             entityId            = 0;  // Every entity should have an id
 
+  // TODO: Should these be moved to the Entity2D class? Reason, what if this class is extended to represent a 3D class (i.e., a 3D entity projected into 2D space)? Then the position and velocity will have no meaning.
   protected Position2D                      position;
   protected Vector2D                        velocity;                 // This will likely stay here since an entity needs to exist somewhere on the screen.
 
