@@ -1,6 +1,6 @@
 package game.framework;
 
-import game.framework.entities.Entity;
+import game.framework.entities.Entity2D;
 import game.framework.interfaces.IRender;
 import game.framework.utilities.GameEngineConstants;
 
@@ -35,11 +35,11 @@ public abstract class GameEngine
   private boolean                         gameRunning;
 
   // Variables to keep track of the different game entities including enemies, enemy shots, player shots and the player ship
-  private Entity                          player;
-  private LinkedList<Entity>              enemies;
-  private LinkedList<Entity>              playerShots;
-  private LinkedList<Entity>              enemyShots;
-  private LinkedList<Entity>              powerups;
+  private Entity2D                          player;
+  private LinkedList<Entity2D>              enemies;
+  private LinkedList<Entity2D>              playerShots;
+  private LinkedList<Entity2D>              enemyShots;
+  private LinkedList<Entity2D>              powerups;
   
   // TODO: Possibly add a power-up entity list. 
 
@@ -120,10 +120,10 @@ public abstract class GameEngine
   public abstract void userGamePreUpdate();
 
   // Any logic that needs to occur when each entity is updated goes here.
-  public abstract void userGameUpdateEntity(Entity entity);
+  public abstract void userGameUpdateEntity(Entity2D entity);
 
   // When a collision is detected between two entities, let the user handle the specific collision
-  public abstract void userHandleEntityCollision(Entity entity1, Entity entity2);
+  public abstract void userHandleEntityCollision(Entity2D entity1, Entity2D entity2);
 
   // Allow the user to handle any user specific input during the game loop execution
   public abstract void userProcessInput();
@@ -286,16 +286,16 @@ public abstract class GameEngine
     /*
      *  Initialize all entities
      */
-    player = new Entity(GameEngineConstants.EntityTypes.PLAYER);
+    player = new Entity2D(GameEngineConstants.EntityTypes.PLAYER);
     player.setPosition(screenWidth / 2, screenHeight / 2);
     player.setVelocity(0.0, 0.0);
     player.setAlive(false);
     player.setVisible(false);
 
-    enemies = new LinkedList<Entity>();
-    playerShots = new LinkedList<Entity>();
-    enemyShots = new LinkedList<Entity>();
-    powerups = new LinkedList<Entity>();
+    enemies = new LinkedList<Entity2D>();
+    playerShots = new LinkedList<Entity2D>();
+    enemyShots = new LinkedList<Entity2D>();
+    powerups = new LinkedList<Entity2D>();
 
     /*
      *  Set default values
@@ -376,7 +376,7 @@ public abstract class GameEngine
     // Update positions for the enemies list
     for (int i = 0; i < enemies.size(); i++)
     {
-      Entity currentEntity = enemies.get(i);
+      Entity2D currentEntity = enemies.get(i);
       currentEntity.updatePosition(delta);
       currentEntity.updateRotation(delta);
       currentEntity.updateLifetime();
@@ -389,7 +389,7 @@ public abstract class GameEngine
     for (int i = 0; i < playerShots.size(); i++)
     {
       // Update the entity
-      Entity currentEntity = playerShots.get(i);
+      Entity2D currentEntity = playerShots.get(i);
       currentEntity.updatePosition(delta);
       currentEntity.updateRotation(delta);
       currentEntity.updateLifetime();
@@ -402,7 +402,7 @@ public abstract class GameEngine
     for (int i = 0; i < enemyShots.size(); i++)
     {
       // Update the entity
-      Entity currentEntity = enemyShots.get(i);
+      Entity2D currentEntity = enemyShots.get(i);
       currentEntity.updatePosition(delta);
       currentEntity.updateRotation(delta);
       currentEntity.updateLifetime();
@@ -415,7 +415,7 @@ public abstract class GameEngine
     for (int i = 0; i < powerups.size(); i++)
     {
       // Update the entity
-      Entity currentPowerup = powerups.get(i);
+      Entity2D currentPowerup = powerups.get(i);
       currentPowerup.updatePosition(delta);
       currentPowerup.updateRotation(delta);
       currentPowerup.updateLifetime();
@@ -466,14 +466,14 @@ public abstract class GameEngine
      */
     for (int playerShotIndex = 0; playerShotIndex < playerShots.size(); playerShotIndex++)
     {
-      Entity currentPlayerShot = (Entity) playerShots.get(playerShotIndex);
+      Entity2D currentPlayerShot = (Entity2D) playerShots.get(playerShotIndex);
 
       if (currentPlayerShot.isAlive())
       {
         // Second, compare the player shot vector with all enemies to check for any collisions
         for (int enemyIndex = 0; enemyIndex < enemies.size(); enemyIndex++)
         {
-          Entity currentEnemy = (Entity) enemies.get(enemyIndex);
+          Entity2D currentEnemy = (Entity2D) enemies.get(enemyIndex);
 
           if (currentEnemy.isAlive())
           {
@@ -498,7 +498,7 @@ public abstract class GameEngine
      */
     for (int enemyShotIndex = 0; enemyShotIndex < enemyShots.size(); enemyShotIndex++)
     {
-      Entity currentEnemyShot = (Entity) enemyShots.get(enemyShotIndex);
+      Entity2D currentEnemyShot = (Entity2D) enemyShots.get(enemyShotIndex);
 
       if (currentEnemyShot.isAlive())
       {
@@ -516,7 +516,7 @@ public abstract class GameEngine
      */
     for (int powerupIndex = 0; powerupIndex < powerups.size(); powerupIndex++)
       {
-        Entity currentPowerup = (Entity) powerups.get(powerupIndex);
+        Entity2D currentPowerup = (Entity2D) powerups.get(powerupIndex);
 
         if (currentPowerup.isAlive())
         {
@@ -534,7 +534,7 @@ public abstract class GameEngine
      */
     for (int enemyIndex = 0; enemyIndex < enemies.size(); enemyIndex++)
     {
-      Entity currentEnemy = (Entity) enemies.get(enemyIndex);
+      Entity2D currentEnemy = (Entity2D) enemies.get(enemyIndex);
 
       if (currentEnemy.isAlive())
       {
@@ -580,7 +580,7 @@ public abstract class GameEngine
     // Draw the enemy shots 
     for (int i = 0; i < enemyShots.size(); i++)
     {
-      Entity currentEnemyShot = enemyShots.get(i);
+      Entity2D currentEnemyShot = enemyShots.get(i);
       currentEnemyShot.draw(g);
     }
 
@@ -589,7 +589,7 @@ public abstract class GameEngine
     {
       try
       {
-      Entity currentEntity = enemies.get(i);      
+      Entity2D currentEntity = enemies.get(i);      
       currentEntity.draw(g);
       }
       catch(NullPointerException e)
@@ -602,14 +602,14 @@ public abstract class GameEngine
     // Draw the player shots 
     for (int i = 0; i < playerShots.size(); i++)
     {
-      Entity currentPlayerShot = playerShots.get(i);
+      Entity2D currentPlayerShot = playerShots.get(i);
       currentPlayerShot.draw(g);
     }
 
     // Draw the powerups 
     for (int i = 0; i < powerups.size(); i++)
     {
-      Entity currentPowerup = powerups.get(i);
+      Entity2D currentPowerup = powerups.get(i);
       currentPowerup.draw(g);
     }
     
@@ -670,36 +670,36 @@ public abstract class GameEngine
   /*
    * Set a new player Entity
    */
-  public void setNewPlayerEntity(Entity player)
+  public void setNewPlayerEntity(Entity2D player)
   {
-    this.player = (Entity) player.clone();
+    this.player = (Entity2D) player.clone();
     this.player.setEntityType(GameEngineConstants.EntityTypes.PLAYER);
   }
 
   /*
    * Add entities
    */
-  public final void addEnemy(Entity entity)
+  public final void addEnemy(Entity2D entity)
   {
     addEntity(entity, GameEngineConstants.EntityTypes.ENEMY, enemies);
   }
 
-  public void addPlayerShot(Entity entity)
+  public void addPlayerShot(Entity2D entity)
   {
     addEntity(entity, GameEngineConstants.EntityTypes.PLAYER_SHOT, playerShots);
   }
 
-  public void addEnemyShot(Entity entity)
+  public void addEnemyShot(Entity2D entity)
   {
     addEntity(entity, GameEngineConstants.EntityTypes.ENEMY_SHOT, enemyShots);
   }
 
-  public void addPowerup(Entity entity)
+  public void addPowerup(Entity2D entity)
   {
     addEntity(entity, GameEngineConstants.EntityTypes.POWER_UP, powerups);
   }
 
-  private void addEntity(Entity entity, GameEngineConstants.EntityTypes type, LinkedList<Entity> entityList)
+  private void addEntity(Entity2D entity, GameEngineConstants.EntityTypes type, LinkedList<Entity2D> entityList)
   {
     // Set the type of the enemy
     entity.setEntityType(type);
@@ -712,27 +712,27 @@ public abstract class GameEngine
    * Get the different entity lists
    */
 
-  public Entity getPlayer()
+  public Entity2D getPlayer()
   {
     return player;
   }
 
-  public LinkedList<Entity> getEnemies()
+  public LinkedList<Entity2D> getEnemies()
   {
     return enemies;
   }
 
-  public LinkedList<Entity> getEnemyShots()
+  public LinkedList<Entity2D> getEnemyShots()
   {
     return enemyShots;
   }
 
-  public LinkedList<Entity> getPlayerShot()
+  public LinkedList<Entity2D> getPlayerShot()
   {
     return playerShots;
   }
 
-  public LinkedList<Entity> getPowerups()
+  public LinkedList<Entity2D> getPowerups()
   {
     return powerups;
   }
@@ -851,9 +851,9 @@ public abstract class GameEngine
    *  http://java67.blogspot.com/2012/12/difference-between-arraylist-vs-LinkedList-java.html
    *
    */
-  private void removeDeadEntitiesFromEntityList(LinkedList<Entity> entities)
+  private void removeDeadEntitiesFromEntityList(LinkedList<Entity2D> entities)
   {
-    Iterator<Entity> entityIterator = entities.iterator();
+    Iterator<Entity2D> entityIterator = entities.iterator();
 
     while (entityIterator.hasNext())
     {

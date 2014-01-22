@@ -2,7 +2,7 @@ package game.framework.utilities;
 
 import java.util.Random;
 
-import game.framework.entities.Entity;
+import game.framework.entities.Entity2D;
 import game.framework.primitives.Position2D;
 import game.framework.primitives.Vector2D;
 
@@ -20,7 +20,7 @@ public class GameUtility
   /*
    * Cause sprite to warp around the edges of the screen
    */
-  public static void warp(Entity entity, int screenWidth, int screenHeight)
+  public static void warp(Entity2D entity, int screenWidth, int screenHeight)
   {
     // Create some shortcut variables
     double entityWidth = entity.getWidth() - 1;
@@ -46,7 +46,7 @@ public class GameUtility
   }
 
   // Check for collision with wall (i.e edge of the screen)
-  public static void collideWalls(Entity entity, int screenWidth, int screenHeight)
+  public static void collideWalls(Entity2D entity, int screenWidth, int screenHeight)
   {
     int entityWidth = entity.getWidth();
     int entityHeight = entity.getHeight();

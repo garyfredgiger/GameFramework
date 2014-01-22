@@ -22,7 +22,7 @@ import java.awt.Rectangle;
 // TODO: Should the Entity class be re-factored so the notion of position, velocity, visible, alive and update logic are separate from the render logic? Reason, images and shapes need to be rendered differently
 // The answer is YES
 
-public class Entity implements Cloneable
+public class Entity2D implements Cloneable
 {
   /*
    * Class member variables (i.e., constants)
@@ -69,7 +69,7 @@ public class Entity implements Cloneable
   /*
    * Default constructor
    */
-  public Entity()
+  public Entity2D()
   {
     this(GameEngineConstants.EntityTypes.UNDEFINED);
   }
@@ -77,7 +77,7 @@ public class Entity implements Cloneable
   /*
    * Constructor specifying the type of the entity
    */
-  public Entity(GameEngineConstants.EntityTypes type)
+  public Entity2D(GameEngineConstants.EntityTypes type)
   {
     // NOTE: Since every image and shape will have a position and velocity, these will likely stay in this class.
     position = new Position2D();  // This will need to be changed

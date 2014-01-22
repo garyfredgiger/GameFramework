@@ -8,35 +8,56 @@ import game.framework.utilities.GameEngineConstants;
 
 public class EntityRectangle extends EntityShape
 {
-  public static final int DEFAULT_WIDTH = 16;
-  public static final int DEFAULT_HEIGHT = 16;
-
   /*
    * Default Constructor
    */
   public EntityRectangle()
   {
-    this(GameEngineConstants.EntityTypes.UNDEFINED, Color.RED, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    this(GameEngineConstants.EntityTypes.UNDEFINED, DEFAULT_COLOR, DEFAULT_WIDTH, DEFAULT_HEIGHT);
   }
 
+  /*
+   * Constructor specifying the color of the shape entity
+   */
+  public EntityRectangle(Color color)
+  {
+    this(GameEngineConstants.EntityTypes.UNDEFINED, DEFAULT_COLOR, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+  }  
+  
+  /*
+   * Constructor specifying the type of the shape entity
+   */
+  public EntityRectangle(GameEngineConstants.EntityTypes type)
+  {
+    this(type, DEFAULT_COLOR, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+  }  
+
+  
+  /*
+   * Constructor specifying the color and dimensions of the shape entity
+   */
   public EntityRectangle(Color color, int width, int height)
   {
     this(GameEngineConstants.EntityTypes.UNDEFINED, color, width, height);
   }
-  
-  public EntityRectangle(GameEngineConstants.EntityTypes type)
+
+  /*
+   * Constructor specifying the type and dimensions of the shape entity
+   */
+  public EntityRectangle(GameEngineConstants.EntityTypes type, int width, int height)
   {
-    this(type, Color.RED, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-  }  
+    this(type, DEFAULT_COLOR, width, height);
+  }
     
   /*
-   * Constructor specifying the type and color of the shape entity
+   * Constructor specifying the type, color and dimensions of the shape entity
    */
   public EntityRectangle(GameEngineConstants.EntityTypes type, Color color, int width, int height)
   {
-    super(type);
+    super(type, color);
 
-    this.color = color;
+    this.width = width;
+    this.height = height;
   }
   
   @Override

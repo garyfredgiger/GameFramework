@@ -1,6 +1,6 @@
 package game.underdevelopment.entities;
 
-import game.framework.entities.Entity;
+import game.framework.entities.Entity2D;
 import game.framework.utilities.GameEngineConstants;
 
 import java.awt.Color;
@@ -9,7 +9,7 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 
 // Not Sure this will be needed right now since the Entity class will draw shapes by default, at least for now.
-public class EntityShape extends Entity
+public class EntityShape extends Entity2D
 {
   private Shape           shape;
   private Color           color;

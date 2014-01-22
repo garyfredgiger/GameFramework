@@ -6,9 +6,13 @@ import java.awt.Color;
 
 public class EntityShape extends Entity2D
 {
-  // Variables that only apply to shapes
-  protected Color                           color;                             // TODO: This will likely end up in a sub class when the entity class is broken up into two sub classes, imageEntity and shapeEntity
+  public static final int DEFAULT_WIDTH = 16;
+  public static final int DEFAULT_HEIGHT = 16;
+  public static final Color DEFAULT_COLOR = Color.RED;
 
+  // Variables that only apply to shapes
+  protected Color                           color;
+  
   /*
    * Default Constructor
    */
@@ -19,7 +23,7 @@ public class EntityShape extends Entity2D
 
   public EntityShape(GameEngineConstants.EntityTypes type)
   {
-    this(type, Color.RED);
+    this(type, DEFAULT_COLOR);
   }
   
   /*
