@@ -19,7 +19,7 @@ public class EntityShape extends Entity2D
 
   public EntityShape(GameEngineConstants.EntityTypes type)
   {
-    this(GameEngineConstants.EntityTypes.UNDEFINED, Color.RED);
+    this(type, Color.RED);
   }
   
   /*

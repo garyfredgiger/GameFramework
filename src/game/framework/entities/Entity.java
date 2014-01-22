@@ -34,27 +34,28 @@ public class Entity implements Cloneable
   /*
    *  Class instance variables
    */
-  
-  // Variables that are common for all entities 
-  private static int                        nextId              = 0;  // Used to assign a unique id to each entity that is created 
-  protected int                             entityId            = 0;  // Every entity should have an id
 
-  // TODO: Should these be moved to the Entity2D class? Reason, what if this class is extended to represent a 3D class (i.e., a 3D entity projected into 2D space)? Then the position and velocity will have no meaning.
-  protected Position2D                      position;
-  protected Vector2D                        velocity;                 // This will likely stay here since an entity needs to exist somewhere on the screen.
+  // Variables that are common for all 2D entities 
+  private static int                        nextId              = 0;  // Used to assign a unique id to each entity that is created 
+  protected int                             entityId            = 0;  // Every entity should have a unique id
+
+  protected Position2D                      position;                 // Position of the entity
+  protected Vector2D                        velocity;                 // The dx and dy of the velocity. These are added to the x-y component of the positon to move the entity 
+
+  protected int                             width, height;
 
   protected boolean                         alive;                    // Simple, the entity is either alive or dead
-  protected boolean                         visible;                  // My reasoning, an entity can be alive, but not visible (allows for invisible entities during game play or blinking entities)
+  protected boolean                         visible;                  // An entity can be alive, but not visible (allows for invisible/blinking entities during game play)
 
   protected GameEngineConstants.EntityState entityState;
   protected GameEngineConstants.EntityTypes entityType;
 
-  protected double                          moveAngle, faceAngle, rotationRate; // These will be needed for the image (and possibly applied to the shapes). They are here as place holders for now.
+  protected double                          moveAngle, faceAngle, rotationRate;
 
-  protected int                             lifeSpan, lifeAge;
+  protected int                             lifeSpan, lifeAge;                 // Used if entities are to appear for a timed period (e.g., powerups)
 
   // DEBUG VARIABLES
-//  private boolean                           showDirectionVector = true;
+  //  private boolean                           showDirectionVector = true;
 
   /////////////////////////////////////////////////////////////////////////////  
   //    ____                _                   _                 
@@ -82,6 +83,9 @@ public class Entity implements Cloneable
     position = new Position2D();  // This will need to be changed
     velocity = new Vector2D();
 
+    width = 0;
+    height = 0;
+    
     // NOTE: These will likely stay here as well since they can apply to both image and shape entities.
     entityId = nextId++;
     entityType = type;
@@ -93,15 +97,15 @@ public class Entity implements Cloneable
     // Make the entity alive and visible    
     /*
      *  NOTE: Rather than calling the method reset() to set both the flags alive and visible, they will be set individually.
-     *        The reason? Well, if a subclass extends this method, overrides the reset() method and references an object in 
-     *        the reset method, a null pointer exception will occur even if the object is instantiated inside of the
-     *        subclass's constructor. Why? Well, java requires that the parent class's constructor be called first inside of
-     *        the sub classes constructor. Since in this case this constructor calls the reset() method and since the subclass
-     *        overrides the reset() method, the inner most instance of the reset() method is called first (in this case the
-     *        sub class's overriden reset() method). When the subclass's reset() method is called first from within the parent
-     *        class's constructor, it references the object in the subclass before it can be instantiated in the suclass's
-     *        constructor.
-     */       
+     *        The reason? Well, if a subclass extends this class, overrides the reset() method and references an
+     *        object in the reset() method, a null pointer exception will occur even if the object is instantiated inside of 
+     *        the subclass's constructor. Why? Well, java requires that the parent class's constructor be called first
+     *        inside of the sub classes constructor. Since in this case this constructor calls the reset() method and since
+     *        the subclass overrides the reset() method, the inner most instance of the reset() method is called first (in 
+     *        this case the sub class's overridden reset() method). When the subclass's reset() method is called first from 
+     *        within the parent class's constructor, it references the object in the subclass before it can be instantiated
+     *        in the suclass's constructor. This results in a null pointer exception.
+     */
     //this.reset();
     this.visible = true;
     this.alive = true;
@@ -119,7 +123,6 @@ public class Entity implements Cloneable
   /*
    * Set the alive status of the entity
    */
-  // NOTE: All Entities will have alive status 
   public void setAlive(boolean alive)
   {
     this.alive = alive;
@@ -128,7 +131,6 @@ public class Entity implements Cloneable
   /*
    * Set the visible status of the entity
    */
-  // NOTE: All Entities will have visible status 
   public void setVisible(boolean visible)
   {
     this.visible = visible;
@@ -146,7 +148,6 @@ public class Entity implements Cloneable
   /*
    * Sets the entity type. Entity types include PLAYER, PLAYER_SHOT, ENEMY, ENEMY_SHOT, POWER_UP and UNDEFINED
    */
-  // NOTE: All Entities will have a type 
   public void setEntityType(GameEngineConstants.EntityTypes type)
   {
     entityType = type;
@@ -163,7 +164,6 @@ public class Entity implements Cloneable
   /*
    * Sets the entity's position using doubles for both the X and Y components
    */
-  // NOTE: All Entities will have a position 
   public void setPosition(double x, double y)
   {
     position.set(x, y);
@@ -172,7 +172,6 @@ public class Entity implements Cloneable
   /*
    * Sets the X component of the entity's position
    */
-  // NOTE: All Entities will have a position 
   public void setPositionX(double x)
   {
     position.x = x;
@@ -181,12 +180,20 @@ public class Entity implements Cloneable
   /*
    * Sets the Y component of the entity's position
    */
-  // NOTE: All Entities will have a position 
   public void setPositionY(double y)
   {
     position.y = y;
   }
 
+  /*
+   * Set the dimensions of the entity
+   */
+  public void setDimensions(int w, int h)
+  {
+    width = w;
+    height = h;
+  }
+  
   /*
    * Velocity setters
    */
@@ -382,6 +389,43 @@ public class Entity implements Cloneable
     return lifeAge;
   }
 
+  /*
+   * Returns the width of the entity
+   */
+  public int getWidth()
+  {
+    return width;
+  }
+
+  /*
+   * Returns the height of the entity
+   */
+  public int getHeight()
+  {
+    return height;
+  }
+
+  public Position2D getCenter()
+  {
+    return new Position2D(getCenterX(), getCenterY());
+  }
+
+  /*
+   * Returns the x component of the center of the image to the caller.
+   */
+  public double getCenterX()
+  {
+    return position.x + (width / 2);
+  }
+
+  /*
+   * Returns the y component of the center of the image to the caller. 
+   */
+  public double getCenterY()
+  {
+    return position.y + (height / 2);
+  }
+  
   /////////////////////////////////////////////////////////////////////////////
   //   _____ _                 
   //  |  ___| | __ _  __ _ ___ 
@@ -456,6 +500,40 @@ public class Entity implements Cloneable
     {
       return null;
     }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+  //    ____      _ _ _     _             
+  //   / ___|___ | | (_)___(_) ___  _ __  
+  //  | |   / _ \| | | / __| |/ _ \| '_ \ 
+  //  | |__| (_) | | | \__ \ | (_) | | | |
+  //   \____\___/|_|_|_|___/_|\___/|_| |_|
+  //                                      
+  //   __  __      _   _               _     
+  //  |  \/  | ___| |_| |__   ___   __| |___ 
+  //  | |\/| |/ _ \ __| '_ \ / _ \ / _` / __|
+  //  | |  | |  __/ |_| | | | (_) | (_| \__ \
+  //  |_|  |_|\___|\__|_| |_|\___/ \__,_|___/
+  //                                         
+  /////////////////////////////////////////////////////////////////////////////
+  
+  /*
+   *  Get the current bounding rectangle of the entity based on the entity's position
+   */
+  public Rectangle getBoundingRectangle()
+  {
+    return new Rectangle((int) position.x, (int) position.y, width, height);
+  }
+
+  /*
+   * Checks if this this entities bounding rectangle intersects with the other entities bounding rectangle.
+   * 
+   * True is returned if both rectangles intersect (a collision).
+   * False is returned otherwise.
+   */
+  public boolean collidesWith(Rectangle otherEntityBoundingRectangle)
+  {
+    return (otherEntityBoundingRectangle.intersects(getBoundingRectangle()));
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -537,17 +615,17 @@ public class Entity implements Cloneable
   // NOTE: This will be entity type dependent given that an entity can be a shape or an image
   public void draw(Graphics2D g)  // Changed from graphics 
   {
-//    if (isAlive() && isVisible())
-//    {
-//      g.setColor(color);
-//
-//      //      if (showDirectionVector)
-//      //      {
-//      //        g.drawLine((int)getCenterX(), (int)getCenterY(), (int)(getCenterX() + velocity.x), (int)(getCenterY() + velocity.y));
-//      //      }
-//
-//      g.fillRect((int) position.x, (int) position.y, width, height);
-//    }
+    //    if (isAlive() && isVisible())
+    //    {
+    //      g.setColor(color);
+    //
+    //      //      if (showDirectionVector)
+    //      //      {
+    //      //        g.drawLine((int)getCenterX(), (int)getCenterY(), (int)(getCenterX() + velocity.x), (int)(getCenterY() + velocity.y));
+    //      //      }
+    //
+    //      g.fillRect((int) position.x, (int) position.y, width, height);
+    //    }
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -570,6 +648,8 @@ public class Entity implements Cloneable
     entitySnapshot += "Visible: " + visible + "\n";
     entitySnapshot += "Position: " + position + "\n";
     entitySnapshot += "Velocity: " + velocity + "\n";
+    entitySnapshot += "Width: " + width + "\n";
+    entitySnapshot += "Height: " + height + "\n";
     entitySnapshot += "Face Angle: " + faceAngle + "\n";
     entitySnapshot += "Move Angle: " + moveAngle + "\n";
     entitySnapshot += "Rotation Rate: " + rotationRate + "\n";
