@@ -6,13 +6,15 @@ import java.awt.Color;
 
 public class EntityShape extends Entity2D
 {
-  public static final int DEFAULT_WIDTH = 16;
-  public static final int DEFAULT_HEIGHT = 16;
-  public static final Color DEFAULT_COLOR = Color.RED;
+  public static final int     DEFAULT_WIDTH      = 16;
+  public static final int     DEFAULT_HEIGHT     = 16;
+  public static final Color   DEFAULT_COLOR      = Color.RED;
+  public static final boolean DEFAULT_FILL_STATE = true;
 
   // Variables that only apply to shapes
-  protected Color                           color;
-  
+  protected Color             color;
+  protected boolean           fill;
+
   /*
    * Default Constructor
    */
@@ -25,7 +27,7 @@ public class EntityShape extends Entity2D
   {
     this(type, DEFAULT_COLOR);
   }
-  
+
   /*
    * Constructor specifying the type and color of the shape entity
    */
@@ -34,14 +36,20 @@ public class EntityShape extends Entity2D
     super(type);
 
     this.color = color;
+    this.fill = DEFAULT_FILL_STATE;
   }
-  
+
   /*
    * Get the color of the entity
    */
   public Color getColor()
   {
     return color;
+  }
+
+  public boolean getFill()
+  {
+    return fill;
   }
 
   /*
@@ -51,7 +59,12 @@ public class EntityShape extends Entity2D
   {
     color = c;
   }
-  
+
+  public void setFill(boolean fill)
+  {
+    this.fill = fill;
+  }
+
   /////////////////////////////////////////////////////////////////////////////
   //   ____       _                   __  __      _   _               _     
   //  |  _ \  ___| |__  _   _  __ _  |  \/  | ___| |_| |__   ___   __| |___ 
@@ -61,7 +74,7 @@ public class EntityShape extends Entity2D
   //                          |___/                                         
   //
   /////////////////////////////////////////////////////////////////////////////
-  
+
   public String toString()
   {
     String entitySnapshot = super.toString();
