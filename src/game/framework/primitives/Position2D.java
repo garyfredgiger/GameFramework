@@ -93,6 +93,18 @@ public class Position2D
     set(p.x, p.y);
   }
 
+  public double distance(Position2D other)
+  {
+    return distance(other.x, other.y);
+  }
+
+  public double distance(double x, double y)
+  {
+    double distX = this.x - x;
+    double distY = this.y - y;
+    return (float) Math.sqrt(distX * distX + distY * distY);
+  }
+
   /**
    * Reset the position
    */

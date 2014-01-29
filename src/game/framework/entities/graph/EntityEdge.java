@@ -7,6 +7,7 @@ import game.framework.interfaces.graph.IEdge;
 
 public class EntityEdge extends EntityLine implements IEdge
 {
+  private int    index;
   private int    sourceNodeId;
   private int    destinationNodeId;
   private double cost;
@@ -24,13 +25,20 @@ public class EntityEdge extends EntityLine implements IEdge
   public EntityEdge(int source, int destination, double cost)
   {
     this.sourceNodeId = source;
-    this.destinationNodeId = destination;    
+    this.destinationNodeId = destination;
+    this.cost = cost;
+    this.index = -1;
   }
 
   public String toString()
   {
+    //String entitySnapshot = super.toString();
+    String entitySnapshot = "";
     DecimalFormat fmt = new DecimalFormat("0.00");
-    return "E(" + this.sourceNodeId + ", " + this.destinationNodeId + ") [" + fmt.format(this.cost) + "] |";
+    entitySnapshot += "E(" + this.sourceNodeId + ", " + this.destinationNodeId + ") [" + fmt.format(this.cost) + "]";
+    //entitySnapshot += "x1: " + position.x + " y1: " + position.y + " x2: " + width + " y2: " + height;
+
+    return entitySnapshot;
   }
 
   @Override
@@ -74,6 +82,20 @@ public class EntityEdge extends EntityLine implements IEdge
   public boolean isEqual(IEdge edge)
   {
     return (this.destinationNodeId == edge.getDestination() && this.sourceNodeId == edge.getSource() && this.cost == edge.getCost());
+  }
+
+  // This might not be needed
+  @Override
+  public int getIndex()
+  {
+    return this.index;
+  }
+
+  // This might not be needed
+  @Override
+  public void setIndex(int index)
+  {
+    this.index = index;
   }
 }
 

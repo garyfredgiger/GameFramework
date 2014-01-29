@@ -228,6 +228,18 @@ public class Vector2D implements Cloneable
     return Math.atan2(unitVector.y, unitVector.x);
   }
 
+  public float distance(Vector2D other)
+  {
+    return distance(other.x, other.y);
+  }
+
+  public float distance(double x, double y)
+  {
+    double distX = this.x - x;
+    double distY = this.y - y;
+    return (float) Math.sqrt(distX * distX + distY * distY);
+  }
+  
   /**
    * Return this Vector's String representation.
    */

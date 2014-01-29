@@ -2,6 +2,10 @@ package game.framework.interfaces.graph;
 
 public interface IEdge
 {
+  public int getIndex();  // This might not be needed
+  
+  public void setIndex(int index);  // This might not be needed
+  
   public void setSource(int nodeId);
   
   public void setDestination(int nodeId);

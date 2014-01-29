@@ -42,4 +42,11 @@ public class EntityNode extends EntityOval implements INode
   {
     this.position.set(position);
   }
+  
+  @Override
+  public String toString()
+  {
+    return getIndex() + ":\t(" + position.x + ", " + position.y + ")";
+    // return getPosition().getX() + ", " + getPosition().getY() + ";";
+  }
 }
