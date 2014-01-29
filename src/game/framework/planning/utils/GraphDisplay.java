@@ -1,10 +1,10 @@
 package game.framework.planning.utils;
 
-import game.framework.entities.graph.EntityEdge;
-import game.framework.entities.graph.EntityNode;
 import game.framework.planning.Graph;
 import game.framework.planning.GraphEdgeIterator;
 import game.framework.planning.GraphNodeIterator;
+import game.framework.planning.interfaces.graph.IEdge;
+import game.framework.planning.interfaces.graph.INode;
 
 
 public class GraphDisplay
@@ -27,7 +27,7 @@ public class GraphDisplay
 
     while (iterator.hasNext())
     {
-      EntityNode node = (EntityNode) iterator.next();
+      INode node = (INode) iterator.next();
 
       System.out.println(node.toString());
     }
@@ -53,14 +53,14 @@ public class GraphDisplay
     GraphNodeIterator iterator = new GraphNodeIterator(g, ordered);
     while (iterator.hasNext())
     {
-      EntityNode node = (EntityNode) iterator.next();
+      INode node = (INode) iterator.next();
 
       String graphNodeWithEdges = node.getIndex() + ":\t";
 
       GraphEdgeIterator edgeIterator = new GraphEdgeIterator(g, node.getIndex());
       while (edgeIterator.hasNext())
       {
-        EntityEdge edge = (EntityEdge) edgeIterator.next();
+        IEdge edge = (IEdge) edgeIterator.next();
         graphNodeWithEdges += edge.toString() + " ";
       }
       System.out.println(graphNodeWithEdges);

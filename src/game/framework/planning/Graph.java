@@ -1,7 +1,7 @@
 package game.framework.planning;
 
-import game.framework.entities.graph.EntityEdge;
-import game.framework.entities.graph.EntityNode;
+import game.framework.planning.interfaces.graph.IEdge;
+import game.framework.planning.interfaces.graph.INode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,12 +17,12 @@ public abstract class Graph
   /*
    *  Stores the nodes given the index of a particular node.
    */
-  protected HashMap<Integer, EntityNode>       nodes               = new HashMap<Integer, EntityNode>();
+  protected HashMap<Integer, INode>       nodes               = new HashMap<Integer, INode>();
 
   /*
    *  Classic adjacency list construct where each row is indexed by the node id and each entry is a List os edges 
    */
-  protected HashMap<Integer, List<EntityEdge>> adjacentcyListEdges = new HashMap<Integer, List<EntityEdge>>();
+  protected HashMap<Integer, List<IEdge>> adjacentcyListEdges = new HashMap<Integer, List<IEdge>>();
 
   /*
    *  Classic adjacency list construct where each row is indexed by the node id and each entry is a set of adjacent node ids
@@ -109,7 +109,7 @@ public abstract class Graph
    * @return
    */
   // TODO: This will most likely stay in the Graph class since this operation is the same for all graph types 
-  public EntityNode getNode(int nodeIndex)
+  public INode getNode(int nodeIndex)
   {
     if (isNodePresent(nodeIndex))
     {
@@ -125,16 +125,16 @@ public abstract class Graph
    * @return
    */
   // TODO: This will most likely stay in the Graph class since this operation is the same for all graph types 
-  public List<EntityNode> getNodes()
+  public List<INode> getNodes()
   {
     // Create the list of nodes to return
-    List<EntityNode> listOfActiveNodes = new ArrayList<EntityNode>(this.numActiveNodes());
+    List<INode> listOfActiveNodes = new ArrayList<INode>(this.numActiveNodes());
 
-    Iterator<Entry<Integer, EntityNode>> iteratorNodes = nodes.entrySet().iterator();
+    Iterator<Entry<Integer, INode>> iteratorNodes = nodes.entrySet().iterator();
     while (iteratorNodes.hasNext())
     {
-      Entry<Integer, EntityNode> nodes = iteratorNodes.next();
-      EntityNode node = (EntityNode) nodes.getValue();
+      Entry<Integer, INode> nodes = iteratorNodes.next();
+      INode node = (INode) nodes.getValue();
 
       if (node != null)
       {
@@ -151,10 +151,10 @@ public abstract class Graph
    * @return
    */
   // TODO: This will most likely stay in the Graph class since this operation is the same for all graph types 
-  public List<EntityNode> getOrderedNodes()
+  public List<INode> getOrderedNodes()
   {
     // Create the list of nodes to return
-    List<EntityNode> listOfActiveNodes = new ArrayList<EntityNode>(this.numActiveNodes());
+    List<INode> listOfActiveNodes = new ArrayList<INode>(this.numActiveNodes());
 
     for (int currentNodeIndex = 0; currentNodeIndex < this.numNodes(); currentNodeIndex++)
     {
@@ -190,14 +190,14 @@ public abstract class Graph
    * For instance the uniqueEdge method. 
    */
   // TODO: NOT SURE WHERE THIS WILL GO.
-  protected EntityEdge uniqueEdge(int source, int destination)
+  protected IEdge uniqueEdge(int source, int destination)
   {
-    EntityEdge existingEdge = null;
-    Iterator<EntityEdge> edgesIterator = adjacentcyListEdges.get(source).iterator();
+    IEdge existingEdge = null;
+    Iterator<IEdge> edgesIterator = adjacentcyListEdges.get(source).iterator();
 
     while (edgesIterator.hasNext())
     {
-      EntityEdge edge = edgesIterator.next();
+      IEdge edge = edgesIterator.next();
 
       if (edge.getDestination() == destination)
       {
@@ -211,21 +211,21 @@ public abstract class Graph
 
   abstract public boolean isUndirected();
   
-  abstract public int AddNode(EntityNode node);
+  abstract public int AddNode(INode node);
 
   abstract public void removeNode(int nodeIndex);
 
-  abstract public void AddEdge(EntityEdge edge);
+  abstract public void AddEdge(IEdge edge);
 
   abstract public void removeEdge(int from, int to);
 
   abstract public boolean updateEdgeCost(int from, int to, double cost);
 
-  abstract public EntityEdge getEdge(int from, int to);
+  abstract public IEdge getEdge(int from, int to);
   
-  abstract public List<EntityEdge> getEdges();
+  abstract public List<IEdge> getEdges();
 
-  abstract public List<EntityEdge> getNodeEdges(int nodeIndex);
+  abstract public List<IEdge> getNodeEdges(int nodeIndex);
 
   abstract public boolean isEdgePresent(int from, int to);
 }

@@ -1,15 +1,24 @@
 package game.framework.planning.utils;
 
-import game.framework.entities.graph.EntityEdge;
-import game.framework.entities.graph.EntityNode;
 import game.framework.planning.Graph;
+import game.framework.planning.interfaces.graph.IEdge;
+import game.framework.planning.interfaces.graph.IEdgeFactory;
+import game.framework.planning.interfaces.graph.INode;
+import game.framework.planning.interfaces.graph.INodeFactory;
 import game.framework.primitives.Position2D;
 
 
 public class GraphGenerator
 {
-  public static Graph generateGridGraph(Graph g, int startNodeCol, int startNodeRow, int nodeSpacingCol, int nodeSpacingRow, int rows, int cols, boolean digraph)
+  private static IEdgeFactory edgeFactory;
+  private static INodeFactory nodeFactory;
+  
+  // TODO: Remove nodeRadius parameter
+  public static Graph generateGridGraph(Graph g, INodeFactory nFactory, IEdgeFactory eFactory, int nodeRadius, int startNodeCol, int startNodeRow, int nodeSpacingCol, int nodeSpacingRow, int rows, int cols, boolean digraph)
   {
+    edgeFactory = eFactory;
+    nodeFactory = nFactory;
+    
     GraphHelper_CreateGrid(g, startNodeCol, startNodeRow, nodeSpacingCol, nodeSpacingRow, rows, cols);
 
     return g;
@@ -45,9 +54,12 @@ public class GraphGenerator
         if (ValidNeighbor(neighborNodeX, neighborNodeY, NumCellsX, NumCellsY))
         {
           // calculate the distance to this node
-          Position2D PosNode = graph.getNode(nodeIndex).getPosition();
-          Position2D PosNeighbour = graph.getNode(neighborNodeIndex).getPosition();
-          
+          // TODO: Possibly have a method here from the INode interface that is call where updates can be applied to the node  
+          Position2D PosNode = graph.getNode(nodeIndex).centerGet();
+          Position2D PosNeighbour = graph.getNode(neighborNodeIndex).centerGet();
+//          Position2D PosNode = graph.getNode(nodeIndex).positionGet();
+         // Position2D PosNeighbour = graph.getNode(neighborNodeIndex).positionGet();
+
           double dist = PosNode.distance(PosNeighbour);
 
 //          System.out.println("Node " + graph.getNode(nodeIndex).getIndex() + " (" + row + ", " + col + ")"); 
@@ -55,19 +67,20 @@ public class GraphGenerator
 //          System.out.println("Creating Edge between Node " + graph.getNode(nodeIndex).getIndex() + " " + PosNode + " and Node " + graph.getNode(neighborNodeIndex).getIndex() + " " + PosNeighbour + ".");
           
           // this neighbor is okay so it can be added
-          EntityEdge NewEdge = new EntityEdge(nodeIndex, neighborNodeIndex, dist);
-          NewEdge.setPosition(PosNode);
-          NewEdge.setDimensions((int)PosNeighbour.x, (int)PosNeighbour.y);
-//          System.out.println("\tNewEdge Edge:" + NewEdge);
-          graph.AddEdge(NewEdge);
+          IEdge newEdge = edgeFactory.createEdge(nodeIndex, neighborNodeIndex, dist); 
+          
+          newEdge.setEndPoints(PosNode, PosNeighbour);
+          graph.AddEdge(newEdge);
 
           // if graph is not a digraph then an edge needs to be added going
           // in the other direction
           if (graph.isUndirected())
           {
-            EntityEdge oppositeNewEdge = new EntityEdge(neighborNodeIndex, nodeIndex, dist);
-            oppositeNewEdge.setPosition(PosNeighbour);
-            oppositeNewEdge.setDimensions((int)PosNode.x, (int)PosNode.y);
+            //IEdge oppositeNewEdge = new EntityEdge(neighborNodeIndex, nodeIndex, dist);
+            IEdge oppositeNewEdge = edgeFactory.createEdge(neighborNodeIndex, nodeIndex, dist); 
+            
+            oppositeNewEdge.setEndPoints(PosNeighbour, PosNode);
+//            oppositeNewEdge.setDimensions((int)PosNode.x, (int)PosNode.y);
 //            System.out.println("\toppositeNewEdge Edge:" + oppositeNewEdge);
             graph.AddEdge(oppositeNewEdge);
           }
@@ -83,18 +96,17 @@ public class GraphGenerator
   private static void GraphHelper_CreateGrid(Graph graph, int startCol, int startRow, int colSpacing, int rowSpacing, int NumCellsY, int NumCellsX)  
   {
     // Need some temporaries to help calculate each node center
-//    double CellWidth = (double) cySize / (double) NumCellsX;
-//    double CellHeight = (double) cxSize / (double) NumCellsY;
-//
-//    double midX = CellWidth / 2;
-//    double midY = CellHeight / 2;
 
     // First create all the nodes
     for (int row = 0; row < NumCellsY; row++)
     {
       for (int col = 0; col < NumCellsX; col++)
       {
-        graph.AddNode(new EntityNode(graph.getNextFreeNodeIndex(), new Position2D(startCol + (col * colSpacing), startRow + (row * rowSpacing))));
+        // NOTE: Since the entity node here will be part of the actual project, there is no concept of a dimension. Therefore, another interface 
+        //       may need to go here that gets implemented by the project and creates an actual EntityNode, but returns it as an INode.
+        // 
+        INode node = nodeFactory.createNode(graph.getNextFreeNodeIndex(), new Position2D(startCol + (col * colSpacing), startRow + (row * rowSpacing)));
+        graph.AddNode(node);
       }
     }
 
@@ -105,16 +117,9 @@ public class GraphGenerator
     {
       for (int col = 0; col < NumCellsX; col++)
       {
-//        System.out.println();
-//        System.out.println();
         GraphHelper_AddAllNeighboursToGridNode(graph, row, col, NumCellsX, NumCellsY);
       }
-    }
-    
-//    GraphDisplay.DisplayGraphNodesToConsole(graph, true);
-//    System.out.println();
-//    System.out.println();
-//    GraphDisplay.DisplayGraphToConsole(graph, true);
+    }    
   }
 }
 

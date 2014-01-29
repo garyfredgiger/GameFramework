@@ -1,12 +1,12 @@
 package game.framework.planning;
 
-import game.framework.entities.graph.EntityNode;
+import game.framework.planning.interfaces.graph.INode;
 
 import java.util.Iterator;
 
 public class GraphNodeIterator implements Iterator<Object>
 {
-  private Iterator<EntityNode> _currentNode;
+  private Iterator<INode> _currentNode;
 
   public GraphNodeIterator(Graph graph, boolean ordered)
   {

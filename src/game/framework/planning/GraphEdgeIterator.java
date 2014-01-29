@@ -1,12 +1,12 @@
 package game.framework.planning;
 
-import game.framework.entities.graph.EntityEdge;
+import game.framework.planning.interfaces.graph.IEdge;
 
 import java.util.Iterator;
 
 public class GraphEdgeIterator implements Iterator<Object>
 {
-  private Iterator<EntityEdge> _currentEdge;
+  private Iterator<IEdge> _currentEdge;
 
   public GraphEdgeIterator(Graph graph, int nodeIndex)
   {

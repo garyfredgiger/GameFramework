@@ -5,17 +5,21 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import game.framework.entities.graph.EntityEdge;
-import game.framework.entities.graph.EntityNode;
+import game.framework.planning.interfaces.graph.IEdge;
+import game.framework.planning.interfaces.graph.IEdgeFactory;
+import game.framework.planning.interfaces.graph.INode;
 
 public class GraphUndirected extends Graph
 {
+  IEdgeFactory edgeFactory;
+  
   /*
    * Default Constructor
    */
-  public GraphUndirected()
+  public GraphUndirected(IEdgeFactory edgeFactory)
   {
     super();
+    this.edgeFactory = edgeFactory;
   }
 
   public boolean isUndirected()
@@ -27,7 +31,7 @@ public class GraphUndirected extends Graph
   /*
    * Adds a new node to the current graph
    */
-  public int AddNode(EntityNode node)
+  public int AddNode(INode node)
   {
     // If the current node already exists in the hash map, simply return its index
     if (isNodePresent(node.getIndex()))
@@ -40,7 +44,7 @@ public class GraphUndirected extends Graph
     _numActiveNodes++;  // NOTE: This will need to be decremented when everytime a node is removed
 
     // TODO: Determine if ArrayList is the best List implementation to use for the edges
-    adjacentcyListEdges.put(node.getIndex(), new ArrayList<EntityEdge>(0));
+    adjacentcyListEdges.put(node.getIndex(), new ArrayList<IEdge>(0));
 
     // TODO: Add logic here to update the adjacentcyListNodes hash map
 
@@ -65,13 +69,13 @@ public class GraphUndirected extends Graph
      */
     // First, get the list of edges for the node to be removed.
     // TODO: Can these two lines be combined into one line?
-    List<EntityEdge> nodeEdges = adjacentcyListEdges.get(nodeIndex);  // We must Get the list of edges before...
-    Iterator<EntityEdge> iteratorEdges = nodeEdges.iterator();        // ...getting the iterator.
+    List<IEdge> nodeEdges = adjacentcyListEdges.get(nodeIndex);  // We must Get the list of edges before...
+    Iterator<IEdge> iteratorEdges = nodeEdges.iterator();        // ...getting the iterator.
 
     // Second, iterate through all edges, removing each edge that point to this node.
     while (iteratorEdges.hasNext())
     {
-      EntityEdge edge = iteratorEdges.next();
+      IEdge edge = iteratorEdges.next();
       removeEdge(edge.getDestination(), edge.getSource());
     }
 
@@ -90,7 +94,7 @@ public class GraphUndirected extends Graph
   /*
    * Adds an edge to the graph
    */
-  public void AddEdge(EntityEdge edge)
+  public void AddEdge(IEdge edge)
   {
     int sourceIndex = edge.getSource();
     int destinationIndex = edge.getDestination();
@@ -107,7 +111,7 @@ public class GraphUndirected extends Graph
     /*
      *  First, making sure it is unique (i.e., it does not already exist) add the edge 
      */
-    EntityEdge existingEdge = uniqueEdge(sourceIndex, destinationIndex);
+    IEdge existingEdge = uniqueEdge(sourceIndex, destinationIndex);
 
     // If the edge does not already exist, add the edge
     if (existingEdge == null)
@@ -129,11 +133,13 @@ public class GraphUndirected extends Graph
 
     // Add another edge in the opposite direction (e.g., (destination node id, source node id) )
     // Check to make sure the edge is unique before adding
-    EntityEdge returningEdge = uniqueEdge(destinationIndex, sourceIndex);
+    IEdge returningEdge = uniqueEdge(destinationIndex, sourceIndex);
     if (returningEdge == null)
     {
       // Create a new edge and make it point from the From node back to the To node.
-      EntityEdge newEdge = new EntityEdge(destinationIndex, sourceIndex, edge.getCost());
+      // TODO: May need to add a factory pattern here
+      //IEdge newEdge = new EntityEdge(destinationIndex, sourceIndex, edge.getCost());
+      IEdge newEdge = edgeFactory.createEdge(destinationIndex, sourceIndex, edge.getCost());      
 
 //      System.out.println("Digraph Edge " + newEdge + " does not already exist in the graph. Adding edge.");
 //      System.out.println("Edge " + edge + " does not already exist in the graph. Adding edge.");
@@ -185,7 +191,7 @@ public class GraphUndirected extends Graph
     }
 
     // Check if the edge does not exist
-    EntityEdge edgeToRemove = uniqueEdge(source, destination);
+    IEdge edgeToRemove = uniqueEdge(source, destination);
     if (edgeToRemove != null)
     {
       // TODO: Is there a more efficient way to remove an edge using another list implementation or different data structure?
@@ -207,8 +213,8 @@ public class GraphUndirected extends Graph
     }
 
     // Check if both edges exist
-    EntityEdge edgeToUpdate = uniqueEdge(source, destination);
-    EntityEdge oppositeEdgeToUpdate = uniqueEdge(destination, source);
+    IEdge edgeToUpdate = uniqueEdge(source, destination);
+    IEdge oppositeEdgeToUpdate = uniqueEdge(destination, source);
 
     // If either edge does not exist abort
     // TODO: Should some type of exception be thrown (e.g., edge inconsistency exception) since this should never be the case with an undirected graph
@@ -227,30 +233,30 @@ public class GraphUndirected extends Graph
   /*
    * Get the specified edge
    */
-  public EntityEdge getEdge(int source, int destination)
+  public IEdge getEdge(int source, int destination)
   {
     // TODO: Should a test be performed to see if its reverse edge exists.
     // TODO: Should some type of exception be thrown (e.g., edge inconsistency exception) since this should never be the case with an undirected graph
     return uniqueEdge(source, destination);
   }
 
-  public List<EntityEdge> getEdges()
+  public List<IEdge> getEdges()
   {
     System.out.println("GraphUndirected::getEdges()");
-    ArrayList<EntityEdge> allEdges = new ArrayList<EntityEdge>();
-    HashSet<EntityEdge> edges = new HashSet<EntityEdge>();
+    ArrayList<IEdge> allEdges = new ArrayList<IEdge>();
+    //HashSet<EntityEdge> edges = new HashSet<EntityEdge>();
 
     // Get the list of node IDs
     for (Integer nodeIndex : nodes.keySet())
     {
-      ArrayList<EntityEdge> nodeEdges = (ArrayList<EntityEdge>) adjacentcyListEdges.get(nodeIndex);      
+      ArrayList<IEdge> nodeEdges = (ArrayList<IEdge>) adjacentcyListEdges.get(nodeIndex);      
       allEdges.addAll(nodeEdges);
     }
 
-    Iterator<EntityEdge> tmpIterator = allEdges.iterator();
+    Iterator<IEdge> tmpIterator = allEdges.iterator();
     while(tmpIterator.hasNext())
     {
-      EntityEdge edge = tmpIterator.next();
+      IEdge edge = tmpIterator.next();
       System.out.println(edge);
     }
 
@@ -266,7 +272,7 @@ public class GraphUndirected extends Graph
   /*
    * Get all edges for the specified node 
    */
-  public List<EntityEdge> getNodeEdges(int nodeIndex)
+  public List<IEdge> getNodeEdges(int nodeIndex)
   {
     // NOTE: A conditional check is not required here to see if the node index exists in the hash map of edges.
     //       If the index does not exist a null will be returned (Refer to javadoc for details regarding get and hashmap). 

@@ -1,6 +1,6 @@
 package game.framework.planning;
 
-import game.framework.entities.graph.EntityEdge;
+import game.framework.planning.interfaces.graph.IEdge;
 import game.framework.planning.primitive.Tuple;
 import game.framework.planning.utils.AStarPriorityQueue;
 import game.framework.planning.utils.AStarPriorityQueueComparator;
@@ -14,6 +14,12 @@ import java.util.Set;
 
 public class AStar
 {
+  public static final int TYPE_ASTAR_NODE = 0;
+  public static final int TYPE_ASTAR_EDGE = 1;
+  
+  public static final int ACTION_LABEL_START_NODE = 0;
+  public static final int ACTION_LABEL_TARGET_NODE = 1;
+  
   private Graph                 _mGraph;
 
   // TODO: May need to wrap each node in a path node class that stores the cost between this node
@@ -60,6 +66,9 @@ public class AStar
       return;
     }
 
+    _mGraph.getNode(_mSource).update(TYPE_ASTAR_NODE, ACTION_LABEL_START_NODE);
+    _mGraph.getNode(_mTarget).update(TYPE_ASTAR_NODE, ACTION_LABEL_TARGET_NODE);
+
     // Create an indexed priority queue of node indexes and their F score. The
     // nodes with the lowest overall F cost (G+H) are positioned at the front.
     _openSet = new AStarPriorityQueue<Integer, Double>(_mGraph.numNodes(), new AStarPriorityQueueComparator());
@@ -88,7 +97,7 @@ public class AStar
   private void Search()
   {
     _mGCosts.put(_mSource, 0.0);
-    _mFCosts.put(_mSource, _mGCosts.get(_mSource) + _mGraph.getNode(_mSource).getPosition().distance(_mGraph.getNode(_mTarget).getPosition()));
+    _mFCosts.put(_mSource, _mGCosts.get(_mSource) + _mGraph.getNode(_mSource).positionGet().distance(_mGraph.getNode(_mTarget).positionGet()));
 
     _openSet.add(_mSource, _mFCosts.get(_mSource));
 
@@ -115,7 +124,7 @@ public class AStar
       GraphEdgeIterator edgeIterator = new GraphEdgeIterator(_mGraph, currentNodeIndex);
       while (edgeIterator.hasNext())
       {
-        EntityEdge edgeToCurrentNeighbor = (EntityEdge) edgeIterator.next();
+        IEdge edgeToCurrentNeighbor = (IEdge) edgeIterator.next();
         int currentNeighborIndex = edgeToCurrentNeighbor.getDestination();
 
         // NOTE: The edge cost was already computed when the graph was made. This works in this case since the neighbors are adjacent.
@@ -134,7 +143,7 @@ public class AStar
         {
           _cameFrom.put(currentNeighborIndex, currentNodeIndex);
           _mGCosts.put(currentNeighborIndex, tentativeGScore);
-          _mFCosts.put(currentNeighborIndex, _mGCosts.get(currentNeighborIndex) + _mGraph.getNode(currentNeighborIndex).getPosition().distance(_mGraph.getNode(_mTarget).getPosition()));
+          _mFCosts.put(currentNeighborIndex, _mGCosts.get(currentNeighborIndex) + _mGraph.getNode(currentNeighborIndex).positionGet().distance(_mGraph.getNode(_mTarget).positionGet()));
 
           if (!_openSet.contains(currentNeighborIndex))
           {
