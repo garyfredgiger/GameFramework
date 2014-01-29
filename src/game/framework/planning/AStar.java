@@ -22,7 +22,7 @@ public class AStar
   
   public static final int ACTION_COLOR_NODE_WHEN_ADDED_TO_OPEN_LIST = 2;
   public static final int ACTION_COLOR_NODE_WHEN_ADDED_TO_CLOSED_LIST = 3;
-  
+  public static final int ACTION_COLOR_EDGE_OF_SEARCHED_NODES = 4;
   
   private Graph                 _mGraph;
 
@@ -147,7 +147,7 @@ public class AStar
       {
         IEdge edgeToCurrentNeighbor = (IEdge) edgeIterator.next();
         int currentNeighborIndex = edgeToCurrentNeighbor.getDestination();
-
+        
         // NOTE: The edge cost was already computed when the graph was made. This works in this case since the neighbors are adjacent.
         double tentativeGScore = _mGCosts.get(currentNodeIndex) + edgeToCurrentNeighbor.getCost();
 
@@ -170,6 +170,7 @@ public class AStar
           {
             _openSet.add(currentNeighborIndex, _mFCosts.get(currentNeighborIndex));
             updateNodeWhenAddedToOpenList(currentNeighborIndex);
+            updateEdgeOfNodeWhenAddedToOpenList(edgeToCurrentNeighbor.getSource(), currentNeighborIndex);
           }
         }
       }
@@ -198,6 +199,11 @@ public class AStar
     _mGraph.getNode(nodeIndex).update(TYPE_ASTAR_NODE, ACTION_COLOR_NODE_WHEN_ADDED_TO_CLOSED_LIST);
   }
 
+  private void updateEdgeOfNodeWhenAddedToOpenList(int nodeSource, int nodeDestination)
+  { 
+    _mGraph.getEdge(nodeSource, nodeDestination).update(TYPE_ASTAR_EDGE, ACTION_COLOR_EDGE_OF_SEARCHED_NODES);
+  }
+  
 //  private boolean step()
 //  {
 //    Tuple<Integer, Double> nextLowestNodeFScorePair = _openSet.remove();

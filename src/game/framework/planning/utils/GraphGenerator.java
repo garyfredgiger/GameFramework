@@ -13,11 +13,15 @@ public class GraphGenerator
   private static IEdgeFactory edgeFactory;
   private static INodeFactory nodeFactory;
   
+  private static boolean generateFourNeighbor = false;
+  
   // TODO: Remove nodeRadius parameter
-  public static Graph generateGridGraph(Graph g, INodeFactory nFactory, IEdgeFactory eFactory, int nodeRadius, int startNodeCol, int startNodeRow, int nodeSpacingCol, int nodeSpacingRow, int rows, int cols, boolean digraph)
+  public static Graph generateGridGraph(Graph g, INodeFactory nFactory, IEdgeFactory eFactory, int nodeRadius, int startNodeCol, int startNodeRow, int nodeSpacingCol, int nodeSpacingRow, int rows, int cols, boolean digraph, boolean fourNeighbor)
   {
     edgeFactory = eFactory;
     nodeFactory = nFactory;
+    
+    generateFourNeighbor = fourNeighbor;
     
     GraphHelper_CreateGrid(g, startNodeCol, startNodeRow, nodeSpacingCol, nodeSpacingRow, rows, cols);
 
@@ -44,7 +48,35 @@ public class GraphGenerator
         // Skip if equal to this node
         if ((i == 0) && (j == 0))
           continue;
-                
+       
+        if (generateFourNeighbor)
+        {
+          // Ignore the upper left corner
+          if ((i == -1) && (j == -1))
+          {
+            continue;
+          }
+          
+          // Ignore the upper right corner
+          if ((i == -1) && (j == 1))
+          {
+            continue;
+          }
+          
+          // Ignore the lower left corner
+          if ((i == 1) && (j == -1))
+          {
+            continue;
+          }
+          
+          // Ignore the lower right corner
+          if ((i == 1) && (j == 1))
+          {
+            continue;
+          }
+          
+        }
+        
         int neighborNodeX = col + j;
         int neighborNodeY = row + i;
         int nodeIndex = row * NumCellsX + col;
@@ -54,18 +86,11 @@ public class GraphGenerator
         if (ValidNeighbor(neighborNodeX, neighborNodeY, NumCellsX, NumCellsY))
         {
           // calculate the distance to this node
-          // TODO: Possibly have a method here from the INode interface that is call where updates can be applied to the node  
           Position2D PosNode = graph.getNode(nodeIndex).centerGet();
           Position2D PosNeighbour = graph.getNode(neighborNodeIndex).centerGet();
-//          Position2D PosNode = graph.getNode(nodeIndex).positionGet();
-         // Position2D PosNeighbour = graph.getNode(neighborNodeIndex).positionGet();
 
           double dist = PosNode.distance(PosNeighbour);
 
-//          System.out.println("Node " + graph.getNode(nodeIndex).getIndex() + " (" + row + ", " + col + ")"); 
-//          System.out.print("\tProcess node neighbors (" + neighborNodeX + ", " + neighborNodeY + ")...");
-//          System.out.println("Creating Edge between Node " + graph.getNode(nodeIndex).getIndex() + " " + PosNode + " and Node " + graph.getNode(neighborNodeIndex).getIndex() + " " + PosNeighbour + ".");
-          
           // this neighbor is okay so it can be added
           IEdge newEdge = edgeFactory.createEdge(nodeIndex, neighborNodeIndex, dist); 
           
@@ -80,8 +105,6 @@ public class GraphGenerator
             IEdge oppositeNewEdge = edgeFactory.createEdge(neighborNodeIndex, nodeIndex, dist); 
             
             oppositeNewEdge.setEndPoints(PosNeighbour, PosNode);
-//            oppositeNewEdge.setDimensions((int)PosNode.x, (int)PosNode.y);
-//            System.out.println("\toppositeNewEdge Edge:" + oppositeNewEdge);
             graph.AddEdge(oppositeNewEdge);
           }
         }
