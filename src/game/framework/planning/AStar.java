@@ -20,6 +20,10 @@ public class AStar
   public static final int ACTION_LABEL_START_NODE = 0;
   public static final int ACTION_LABEL_TARGET_NODE = 1;
   
+  public static final int ACTION_COLOR_NODE_WHEN_ADDED_TO_OPEN_LIST = 2;
+  public static final int ACTION_COLOR_NODE_WHEN_ADDED_TO_CLOSED_LIST = 3;
+  
+  
   private Graph                 _mGraph;
 
   // TODO: May need to wrap each node in a path node class that stores the cost between this node
@@ -66,6 +70,7 @@ public class AStar
       return;
     }
 
+    // ACTION - Update the start and target nodes.
     _mGraph.getNode(_mSource).update(TYPE_ASTAR_NODE, ACTION_LABEL_START_NODE);
     _mGraph.getNode(_mTarget).update(TYPE_ASTAR_NODE, ACTION_LABEL_TARGET_NODE);
 
@@ -79,27 +84,42 @@ public class AStar
     _mFCosts = new HashMap<Integer, Double>(_mGraph.numNodes() / 2);
     _mGCosts = new HashMap<Integer, Double>(_mGraph.numNodes() / 2);
 
-    Search();
+    //Search();
   }
 
   private void reconstructPath(int currentNodeId)
   {
     if (currentNodeId == _mSource)
     {
+      // TODO: Add ACTION here that changes the color of the edges associated with the path
       _pathOfNodeIds.add(_mSource);
       return;
     }
 
+    // TODO: Add ACTION here that changes the color of the edges associated with the path
     reconstructPath(_cameFrom.get(currentNodeId));
     _pathOfNodeIds.add(currentNodeId);
   }
 
-  private void Search()
+  private void initialize()
   {
     _mGCosts.put(_mSource, 0.0);
     _mFCosts.put(_mSource, _mGCosts.get(_mSource) + _mGraph.getNode(_mSource).positionGet().distance(_mGraph.getNode(_mTarget).positionGet()));
 
     _openSet.add(_mSource, _mFCosts.get(_mSource));
+    
+    // ACTION here that changes the color of the nodes associated with the path
+    updateNodeWhenAddedToOpenList(_mSource);
+  }
+
+  public void Search()
+  {
+    initialize();
+//    _mGCosts.put(_mSource, 0.0);
+//    _mFCosts.put(_mSource, _mGCosts.get(_mSource) + _mGraph.getNode(_mSource).positionGet().distance(_mGraph.getNode(_mTarget).positionGet()));
+//
+//    _openSet.add(_mSource, _mFCosts.get(_mSource));
+//    // TODO: Add ACTION here that changes the color of the nodes associated with the path
 
     while (!_openSet.isEmpty())
     {
@@ -119,6 +139,7 @@ public class AStar
       // Add the index of the current node to the closed list
       // NOTE: Only the index for the node needs to be stored since it can be used to get the actual node from the graph
       _closedSet.add(currentNodeIndex);
+      updateNodeWhenAddedToClosedList(currentNodeIndex);
 
       // TODO: Get the neighbors of the current node
       GraphEdgeIterator edgeIterator = new GraphEdgeIterator(_mGraph, currentNodeIndex);
@@ -148,12 +169,87 @@ public class AStar
           if (!_openSet.contains(currentNeighborIndex))
           {
             _openSet.add(currentNeighborIndex, _mFCosts.get(currentNeighborIndex));
+            updateNodeWhenAddedToOpenList(currentNeighborIndex);
           }
         }
       }
     }
   }
 
+  private void updateNodeWhenAddedToOpenList(int nodeIndex)
+  {
+    // We do not want to change the color of the start or end node
+    if ((nodeIndex == this._mSource) || (nodeIndex == this._mTarget))
+    {
+      return;
+    }
+    
+    _mGraph.getNode(nodeIndex).update(TYPE_ASTAR_NODE, ACTION_COLOR_NODE_WHEN_ADDED_TO_OPEN_LIST);
+  }
+  
+  private void updateNodeWhenAddedToClosedList(int nodeIndex)
+  {
+    // We do not want to change the color of the start or end node
+    if ((nodeIndex == this._mSource) || (nodeIndex == this._mTarget))
+    {
+      return;
+    }
+    
+    _mGraph.getNode(nodeIndex).update(TYPE_ASTAR_NODE, ACTION_COLOR_NODE_WHEN_ADDED_TO_CLOSED_LIST);
+  }
+
+//  private boolean step()
+//  {
+//    Tuple<Integer, Double> nextLowestNodeFScorePair = _openSet.remove();
+//    int currentNodeIndex = nextLowestNodeFScorePair.getFirst();
+//
+//    // If current node index with next lowest F score is the same as the target index, a path was found.
+//    if (currentNodeIndex == _mTarget)
+//    {
+//      // TODO: Call method that will reconstruct path
+//      _pathOfNodeIds.clear();
+//      reconstructPath(_mTarget);
+//      // Collections.reverse(_pathOfNodeIds);
+//      break;
+//    }
+//
+//    // Add the index of the current node to the closed list
+//    // NOTE: Only the index for the node needs to be stored since it can be used to get the actual node from the graph
+//    _closedSet.add(currentNodeIndex);
+//
+//    // TODO: Get the neighbors of the current node
+//    GraphEdgeIterator edgeIterator = new GraphEdgeIterator(_mGraph, currentNodeIndex);
+//    while (edgeIterator.hasNext())
+//    {
+//      IEdge edgeToCurrentNeighbor = (IEdge) edgeIterator.next();
+//      int currentNeighborIndex = edgeToCurrentNeighbor.getDestination();
+//
+//      // NOTE: The edge cost was already computed when the graph was made. This works in this case since the neighbors are adjacent.
+//      double tentativeGScore = _mGCosts.get(currentNodeIndex) + edgeToCurrentNeighbor.getCost();
+//
+//      if (_closedSet.contains(currentNeighborIndex))
+//      {
+//        if (tentativeGScore >= _mGCosts.get(currentNeighborIndex))
+//        {
+//          continue;
+//        }
+//      }
+//
+//      // Check if current current neighbor index already exists in open list
+//      if ((!_openSet.contains(currentNeighborIndex)) || (tentativeGScore < _mGCosts.get(currentNeighborIndex)))
+//      {
+//        _cameFrom.put(currentNeighborIndex, currentNodeIndex);
+//        _mGCosts.put(currentNeighborIndex, tentativeGScore);
+//        _mFCosts.put(currentNeighborIndex, _mGCosts.get(currentNeighborIndex) + _mGraph.getNode(currentNeighborIndex).positionGet().distance(_mGraph.getNode(_mTarget).positionGet()));
+//
+//        if (!_openSet.contains(currentNeighborIndex))
+//        {
+//          _openSet.add(currentNeighborIndex, _mFCosts.get(currentNeighborIndex));
+//        }
+//      }
+//    }
+//  }
+  
   // private void displayCameFromList()
   // {
   // for (Map.Entry entry : _cameFrom.entrySet())
