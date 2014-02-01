@@ -322,6 +322,8 @@ public abstract class GameEngine
   /*
    *  Start the game loop.
    *  NOTE: This method is called from within the constructor of the class that contains an instance of this class
+   *  
+   *  TODO: Should this be declared as final?
    */
   public void gameStart()
   {

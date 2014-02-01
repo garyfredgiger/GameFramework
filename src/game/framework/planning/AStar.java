@@ -139,6 +139,8 @@ public class AStar
       // Add the index of the current node to the closed list
       // NOTE: Only the index for the node needs to be stored since it can be used to get the actual node from the graph
       _closedSet.add(currentNodeIndex);
+      
+      // These methods make custom additions to the nodes and edges if required by the users application.
       updateNodeWhenAddedToClosedList(currentNodeIndex);
 
       // TODO: Get the neighbors of the current node
@@ -155,13 +157,48 @@ public class AStar
         {
           if (tentativeGScore >= _mGCosts.get(currentNeighborIndex))
           {
+            // GAME STATE TRANSITION: Neighbor exists in closed set and tentative GCost is not less than current GCost of neighbor.
+            // REPORT TO USER: Skipping Node since no cheaper costs exists to the target through this node.
+            // ANIMATION: Highlight Neighbor and display test message that this node will be skipped b/c no cheaper path exists
+            //            between start and this node at the moment.
+            // USER ACTION: Pause execution until user chooses to continue.
+            // POST ACTION: Remove node highlight and restore node to previous color
             continue;
           }
         }
 
         // Check if current current neighbor index already exists in open list
+        // NOTE: Java has "short circuit" evaluation, that is, in the case below if the first condition is true it does not evaluate 
+        //       the rest of the condition. Given the condition below, there exists a potential for a NullPointerException. If the 
+        //       first condition does not evaluate to true, the second condition will throw a null pointer exception if the
+        //       key currentNeighborIndex does not exist in the _mGCosts Hash Map since tentativeGScore < null does not make sense.        
         if ((!_openSet.contains(currentNeighborIndex)) || (tentativeGScore < _mGCosts.get(currentNeighborIndex)))
         {
+          // GAME STATE TRANSITION: Neighbor does not exist in the open list
+          // REPORT TO USER: The neighbor (with index) does not exist in the open list.
+          // ANIMATION: This node will be highlighted and the message will be displayed that this node does not exist in the open list.
+          // USER ACTION: Have user proceed to the next step by pressing desired key.
+          // REPORT TO USER: The node will be added to the open list
+          // ANIMATION: This node will be changed from its non-open list membership status color to its open list membership status color 
+          //            and the message will be displayed that this node was added to the open list.
+          // USER ACTION: Have user proceed to the next step by pressing desired key.
+          // REPORT TO USER: The node's G and F score will be updated with the new value.
+          // ANIMATION: Show the old G and F value.
+          // USER ACTION: Have the user press the desired key to update the G and F score values.
+          // ANIMATION: Show the G and F entries for this node being updated with the new values.
+          //
+          // OR
+          //
+          // GAME STATE TRANSITION: The current tentative G score from start through this neighbor node is less than its previously 
+          //                        recorded G score value in the G List.
+          // REPORT TO USER: The tentative G Score value for neighbor node (with index) is less than its previous recorded value.  
+          // ANIMATION: Highlight neighbor and display text message that the new G and F score of this node will update b/c a cheaper path exists from start to this node
+          // USER ACTION: Have the user press the desired key to update the G and F score values.
+          // REPORT TO USER: The node's G and F score will be updated with the new value.
+          // ANIMATION: Show the old G and F value.
+          // USER ACTION: Have the user press the desired key to update the G and F score values.
+          // ANIMATION: Show the G and F entries for this node being updated with the new values.
+          //
           _cameFrom.put(currentNeighborIndex, currentNodeIndex);
           _mGCosts.put(currentNeighborIndex, tentativeGScore);
           _mFCosts.put(currentNeighborIndex, _mGCosts.get(currentNeighborIndex) + _mGraph.getNode(currentNeighborIndex).positionGet().distance(_mGraph.getNode(_mTarget).positionGet()));
@@ -169,10 +206,14 @@ public class AStar
           if (!_openSet.contains(currentNeighborIndex))
           {
             _openSet.add(currentNeighborIndex, _mFCosts.get(currentNeighborIndex));
+            
+            // These methods make custom additions to the nodes and edges if required by the users application.
             updateNodeWhenAddedToOpenList(currentNeighborIndex);
             updateEdgeOfNodeWhenAddedToOpenList(edgeToCurrentNeighbor.getSource(), currentNeighborIndex);
           }
         }
+        // ELSE: Report to the user that the node already exists in the open list and that the score from start through 
+        //       this node will not be cheaper, hence it will be ignored for now. 
       }
     }
   }
