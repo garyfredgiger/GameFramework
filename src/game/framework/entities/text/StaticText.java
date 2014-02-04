@@ -33,7 +33,7 @@ public class StaticText
   private static Rectangle2D bounds;
 
   private int                x, y;                                 // The specified x-y position of the font
-  protected Color              color;
+  protected Color            color;
 
   private String             str                = "Default String";
   private boolean            centerHorizontal   = false;
@@ -42,13 +42,31 @@ public class StaticText
   private int                drawX, drawY;                         // Stores the computed x-y position of the font
   private Font               font;
 
+  public StaticText(String msg, Color color, String fontName, int fontStyle, int fontSize, int screenWidth, int screenHeight)
+  {
+    this(msg, -1, -1, color, fontName, fontStyle, fontSize, screenWidth, screenHeight);
+    centerHorizontally();
+    centerVertically();
+  }
+  
+  public StaticText(String msg, Color color, Font font, int screenWidth, int screenHeight)
+  {
+    this(msg, -1, -1, color, font.getName(), font.getStyle(), font.getSize(), screenWidth, screenHeight);
+    centerHorizontally();
+    centerVertically();
+  }
+  
+  public StaticText(String msg, int x, int y, Color color, Font font, int screenWidth, int screenHeight)
+  {
+    this(msg, x, y, color, font.getName(), font.getStyle(), font.getSize(), screenWidth, screenHeight);
+  }
+  
   public StaticText(String msg, int x, int y, Color color, String fontName, int fontStyle, int fontSize, int screenWidth, int screenHeight)
   {
     this.str = msg;
 
     this.x = x;
     this.y = y;
-
     this.color = color;
 
     StaticText.screenWidth = screenWidth;
@@ -69,16 +87,13 @@ public class StaticText
 
   public void draw(Graphics2D g)
   {
-    // Draw label next to bullet upgrades
+    // Determine the position of the string
     g.setFont(font);
-
     bounds = g.getFontMetrics().getStringBounds(str, g);
-    drawX = x;
-    drawY = y;
-
     drawX = (centerHorizontal ? (int) ((screenWidth - bounds.getWidth()) / 2) : x);
     drawY = (centerVertical ? (int) ((screenHeight - bounds.getHeight()) / 2) : y);
 
+    // Draw the string
     g.setColor(color);
     g.drawString(str, drawX, drawY);
   }
