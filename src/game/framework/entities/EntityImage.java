@@ -171,6 +171,11 @@ public class EntityImage extends Entity2D
   {
     if (isAlive() && isVisible())
     {
+      if (getImage() == null)
+      {
+        throw new NullPointerException("No image has been assigned to entity.");
+      }
+
       this.transform();
       g.drawImage(getImage(), at, imageObserver);
     }
