@@ -240,7 +240,7 @@ public abstract class GameEngine
       {
         // This is an indication I left in during development to alert me if the game loop is taking too much time for the 
         // render and update operations. This may be commented out when your game is ready for production releases.
-        System.out.println("Update and Render Took Too Much Time, Skipping sleeping this game loop iteration.");
+        System.out.println("Update and Render Took Too Much Time (" + (updateAndRenderLoopTime * GameEngineConstants.NANO_TO_MILLI) + "ms), Skipping sleeping this game loop iteration. Game Loop should take " + (GameEngineConstants.DEFAULT_UPDATE_PERIOD * GameEngineConstants.NANO_TO_MILLI) + "ms or less.");
       }
       else
       {
