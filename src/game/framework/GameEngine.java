@@ -13,11 +13,11 @@ import java.util.LinkedList;
 
 /*
  * 
- * "We should forget about small efficiencies, say about 97% of the time: premature optimization 
- * is the root of all evil." The performance of instanceof probably won't be an issue, so don't 
+ * "We should forget about small efficiencies, say about 97% of the time: premature optimization
+ * is the root of all evil." The performance of instanceof probably won't be an issue, so don't
  * waste your time coming up with exotic workarounds until you're sure that's the problem.
  * 
- *                                                            - Donald Knuth
+ * - Donald Knuth
  */
 
 public abstract class GameEngine
@@ -35,12 +35,12 @@ public abstract class GameEngine
   private boolean                         gameRunning;
 
   // Variables to keep track of the different game entities including enemies, enemy shots, player shots and the player ship
-  private Entity2D                          player;
-  private LinkedList<Entity2D>              enemies;
-  private LinkedList<Entity2D>              playerShots;
-  private LinkedList<Entity2D>              enemyShots;
-  private LinkedList<Entity2D>              powerups;
-  
+  private Entity2D                        player;
+  private LinkedList<Entity2D>            enemies;
+  private LinkedList<Entity2D>            playerShots;
+  private LinkedList<Entity2D>            enemyShots;
+  private LinkedList<Entity2D>            powerups;
+
   // TODO: Possibly add a power-up entity list. 
 
   // Used for keeping track of time (in ms) that elapsed between game loop iterations
@@ -84,12 +84,12 @@ public abstract class GameEngine
   public GameEngine(IRender renderer, int userDefinedScreenWidth, int userDefinedScreenHeight)
   {
     screenRenderer = renderer;
-    
+
     // Check that the default screen width and height are not zero or negative
     if ((userDefinedScreenWidth <= 0) || (userDefinedScreenHeight <= 0))
     {
       // If either screen dimensions are either 0 or negative, then use the default screen width and height.
-      System.out.println("Warning: Either the user defined screen width or height is zero or negative (" + userDefinedScreenWidth + ", " + userDefinedScreenHeight + "). Reverting to default screen width and height (" + GameEngineConstants.DEFAULT_CANVAS_WIDTH + ", " + GameEngineConstants.DEFAULT_CANVAS_HEIGHT+ ").");
+      System.out.println("Warning: Either the user defined screen width or height is zero or negative (" + userDefinedScreenWidth + ", " + userDefinedScreenHeight + "). Reverting to default screen width and height (" + GameEngineConstants.DEFAULT_CANVAS_WIDTH + ", " + GameEngineConstants.DEFAULT_CANVAS_HEIGHT + ").");
 
       screenWidth = GameEngineConstants.DEFAULT_CANVAS_WIDTH;
       screenHeight = GameEngineConstants.DEFAULT_CANVAS_HEIGHT;
@@ -100,7 +100,7 @@ public abstract class GameEngine
       screenHeight = userDefinedScreenHeight;
     }
   }
-  
+
   /////////////////////////////////////////////////////////////////////////////
   //      _    _         _                  _     __  __      _   _               _     
   //     / \  | |__  ___| |_ _ __ __ _  ___| |_  |  \/  | ___| |_| |__   ___   __| |___ 
@@ -425,7 +425,7 @@ public abstract class GameEngine
       // Call the user defined method to perform any specific updates on each sprite
       userGameUpdateEntity(currentPowerup);
     }
-    
+
     /*
     * Update the player
     */
@@ -470,20 +470,18 @@ public abstract class GameEngine
     {
       Entity2D currentPlayerShot = (Entity2D) playerShots.get(playerShotIndex);
 
-      if (currentPlayerShot.isAlive())
+      // Second, compare the player shot vector with all enemies to check for any collisions
+      for (int enemyIndex = 0; enemyIndex < enemies.size(); enemyIndex++)
       {
-        // Second, compare the player shot vector with all enemies to check for any collisions
-        for (int enemyIndex = 0; enemyIndex < enemies.size(); enemyIndex++)
-        {
-          Entity2D currentEnemy = (Entity2D) enemies.get(enemyIndex);
+        Entity2D currentEnemy = (Entity2D) enemies.get(enemyIndex);
 
-          if (currentEnemy.isAlive())
+        // Only handle the collision between the player shot and enemy if they are both alive
+        if (currentEnemy.isAlive() && currentPlayerShot.isAlive())
+        {
+          if (currentPlayerShot.collidesWith(currentEnemy.getBoundingRectangle()))
           {
-            if (currentPlayerShot.collidesWith(currentEnemy.getBoundingRectangle()))
-            {
-              // Given this collision, both the current player shot and current enemy should be marked as "killed" in the user defined method, but it does not have to.
-              userHandleEntityCollision(currentPlayerShot, currentEnemy);
-            }
+            // Given this collision, both the current player shot and current enemy should be marked as "killed" in the user defined method, but it does not have to.
+            userHandleEntityCollision(currentPlayerShot, currentEnemy);            
           }
         }
       }
@@ -517,19 +515,19 @@ public abstract class GameEngine
      * Third, Compare the powerups vector with the player 
      */
     for (int powerupIndex = 0; powerupIndex < powerups.size(); powerupIndex++)
-      {
-        Entity2D currentPowerup = (Entity2D) powerups.get(powerupIndex);
+    {
+      Entity2D currentPowerup = (Entity2D) powerups.get(powerupIndex);
 
-        if (currentPowerup.isAlive())
+      if (currentPowerup.isAlive())
+      {
+        // If the player collides with 
+        if (player.collidesWith(currentPowerup.getBoundingRectangle()))
         {
-          // If the player collides with 
-          if (player.collidesWith(currentPowerup.getBoundingRectangle()))
-          {
-            userHandleEntityCollision(player, currentPowerup);
-            break;
-          }
+          userHandleEntityCollision(player, currentPowerup);
+          break;
         }
       }
+    }
 
     /*
      *  Last, compare the player sprite with all enemies to check for any collisions
@@ -591,10 +589,10 @@ public abstract class GameEngine
     {
       try
       {
-      Entity2D currentEntity = enemies.get(i);      
-      currentEntity.draw(g);
+        Entity2D currentEntity = enemies.get(i);
+        currentEntity.draw(g);
       }
-      catch(NullPointerException e)
+      catch (NullPointerException e)
       {
         System.out.println("One of the enemies in the enemies LinkedList<Entity> was null");
         System.out.println(e.getMessage());
@@ -614,7 +612,7 @@ public abstract class GameEngine
       Entity2D currentPowerup = powerups.get(i);
       currentPowerup.draw(g);
     }
-    
+
     // Draw the player
     player.draw(g);
 
@@ -703,6 +701,11 @@ public abstract class GameEngine
 
   private void addEntity(Entity2D entity, GameEngineConstants.EntityTypes type, LinkedList<Entity2D> entityList)
   {
+    if (entity == null)
+    {
+      return;
+    }
+
     // Set the type of the enemy
     entity.setEntityType(type);
 
@@ -761,7 +764,7 @@ public abstract class GameEngine
   {
     powerups.clear();
   }
-  
+
   public void resetEntityLists()
   {
     clearEnemies();
@@ -811,7 +814,7 @@ public abstract class GameEngine
   {
     cleanPowerupsEntityList = false;
   }
-  
+
   // DONE
   /*
    * If the flags are specified, remove the dead entities from the respective entitiy lists.
@@ -899,6 +902,6 @@ public abstract class GameEngine
     line += 16;
     g.drawString("Delta Loop Time: " + decimalPlaces9.format(updateAndRenderLoopTime * GameEngineConstants.NANO_TO_MILLI), 20, line);
     line += 16;
-    g.drawString("Loop Sleep Time: " + loopSleepTime, 20, line);
+    g.drawString("Loop Sleep Time: " + decimalPlaces9.format(loopSleepTime), 20, line);
   }
 }

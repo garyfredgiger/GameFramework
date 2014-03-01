@@ -63,7 +63,7 @@ public class StaticText
   
   public StaticText(String msg, int x, int y, Color color, String fontName, int fontStyle, int fontSize, int screenWidth, int screenHeight)
   {
-    this.str = msg;
+    setText(msg);
 
     this.x = x;
     this.y = y;
@@ -75,6 +75,26 @@ public class StaticText
     font = new Font(fontName, fontStyle, fontSize);
   }
 
+  public void setText(String msg)
+  {
+    // Only assign the msg to the internal string variable if the message is not null and it does no equal the empty string
+    if (msg != null)
+    {
+      if (!msg.equalsIgnoreCase(""))
+      {
+        this.str = msg;
+      }
+      else
+      {
+        System.out.println("StaticText::setText() - msg is EMPTY STRING");
+      }
+    }
+    else
+    {
+      System.out.println("StaticText::setText() - msg is null");
+    }
+  }
+  
   public void centerHorizontally()
   {
     centerHorizontal = true;

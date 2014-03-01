@@ -21,7 +21,7 @@ public class EntityRectangle extends EntityShape
    */
   public EntityRectangle(Color color)
   {
-    this(GameEngineConstants.EntityTypes.UNDEFINED, DEFAULT_COLOR, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    this(GameEngineConstants.EntityTypes.UNDEFINED, color, DEFAULT_WIDTH, DEFAULT_HEIGHT);
   }
 
   /*

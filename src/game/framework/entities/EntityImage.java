@@ -47,23 +47,35 @@ public class EntityImage extends Entity2D
    */
   public void setImage(Image image)
   {
+    try
+    {
+    
     if (image == null)
     {
-      return;
+      throw new NullPointerException("Image with filename ' + filename + ' could not be loaded.");
     }
 
     // Assign the image, set the dimensions and the default position
     this.image = image;
-    this.setDimensions(this.image.getWidth(imageObserver), this.image.getHeight(imageObserver));
+    
+    while (getImage().getWidth(imageObserver) <= 0);
+    
+    setDimensions(this.image.getWidth(imageObserver), this.image.getHeight(imageObserver));
 
     // NOTE: Since entities have no knowledge of the display environment, this code should not exist in here.
 
     // Start the entity in the upper left corner of the display by default
-    //position.x = 0;
-    //position.y = 0;
+    position.x = 0;
+    position.y = 0;
 
     // Set the affine transform for the image
     at = AffineTransform.getTranslateInstance(position.x, position.y);
+    
+    }
+    catch (NullPointerException e)
+    {
+      System.out.println(e.getMessage());
+    }    
   }
 
   /**
@@ -155,6 +167,7 @@ public class EntityImage extends Entity2D
       // TODO: Add the image loader class here
 
       url = this.getClass().getClassLoader().getResource(filename);
+      //System.out.println(url.toString());
     }
     catch (Exception e)
     {}

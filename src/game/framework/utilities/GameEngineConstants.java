@@ -13,6 +13,9 @@ public class GameEngineConstants
   public static final long  DEFAULT_UPDATE_PERIOD    = 1000000000L / DEFAULT_UPDATE_RATE;                                                                                                                          // nanoseconds
   public static final Color DEFAULT_BACKGROUND_COLOR = Color.BLACK;
 
+  // General constants
+  public static final double DEGREES_IN_A_CIRCLE            = 360;
+  
   /*
    * Constants for non image entities (i.e., shapes)
    */

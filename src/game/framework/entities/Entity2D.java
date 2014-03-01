@@ -47,7 +47,7 @@ public class Entity2D implements Cloneable
   protected boolean                         alive;                    // Simple, the entity is either alive or dead
   protected boolean                         visible;                  // An entity can be alive, but not visible (allows for invisible/blinking entities during game play)
 
-  protected GameEngineConstants.EntityState entityState;
+  protected GameEngineConstants.EntityState entityState;  // Not used but here if needed
   protected GameEngineConstants.EntityTypes entityType;
 
   protected double                          moveAngle, faceAngle, rotationRate;

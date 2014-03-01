@@ -2,5 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/home/ggiger/Projects/sources/PaulLambSoundLibrary/SoundSystem.jar"/>
+	<classpathentry kind="lib" path="/home/ggiger/Projects/sources/PaulLambCodecs/JOgg/CodecJOgg.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

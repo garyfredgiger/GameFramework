@@ -9,9 +9,9 @@ import game.framework.primitives.Vector2D;
 /**
  * This class provides a set of methods that are commonly used in many game to make the game developer's job easier
  * 
- *         A list of issues to address that could cause problems in the future
+ * A list of issues to address that could cause problems in the future
  * 
- *         TODO: Determine another way to access the screen width and height rather then referencing the default values in the methods warp and collideWalls since it may be redefined.
+ * TODO: Determine another way to access the screen width and height rather then referencing the default values in the methods warp and collideWalls since it may be redefined.
  */
 public class GameUtility
 {
@@ -123,6 +123,16 @@ public class GameUtility
   public static Vector2D computeUnitVectorBetweenTwoPositions(Position2D fromPosition, Position2D toPosition)
   {
     return computeVectorBetweenTwoPositions(fromPosition, toPosition).createUnitVector();
+  }
+
+  public static double calcAngleMoveX(double angle)
+  {
+    return (double) (Math.cos(angle * Math.PI / 180));
+  }
+
+  public static double calcAngleMoveY(double angle)
+  {
+    return (double) (Math.sin(angle * Math.PI / 180));
   }
 
   /*
