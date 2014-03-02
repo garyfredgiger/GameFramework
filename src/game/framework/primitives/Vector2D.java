@@ -1,5 +1,7 @@
 package game.framework.primitives;
 
+import game.framework.utilities.GameEngineConstants;
+
 public class Vector2D implements Cloneable
 {
   public double x;   // The Vector's x component
@@ -138,6 +140,31 @@ public class Vector2D implements Cloneable
     return this;
   }
 
+  public void rotateThisVector(int angleInDegrees)
+  {
+    rotateThisVector(angleInDegrees * Math.PI / 180.0);
+  }
+
+  public Vector2D createRotatedVector(int angleInDegrees)
+  {
+    return createRotatedVector(angleInDegrees * Math.PI / 180.0);
+  }
+  
+  public void rotateThisVector(double angleInRadians)
+  {
+    double oldX = this.x;
+    this.x = (float) (this.x * Math.cos(angleInRadians) - this.y * Math.sin(angleInRadians));
+    this.y = (float) (oldX * Math.sin(angleInRadians) + this.y * Math.cos(angleInRadians));
+  }
+
+  public Vector2D createRotatedVector(double angleInRadians)
+  {
+    double x = (this.x * Math.cos(angleInRadians) - this.y * Math.sin(angleInRadians));
+    double y = (this.x * Math.sin(angleInRadians) + this.y * Math.cos(angleInRadians));
+
+    return new Vector2D(x, y);
+  }
+
   /**
    * Multiply the given Vector by this Vector; return the scalar product.
    * 
@@ -195,6 +222,19 @@ public class Vector2D implements Cloneable
       yUnit /= d;
     }
 
+    // Check for zero, that is, sometimes one of the components might not be zero (e.g., 9.184850993605149E-15). However, very small doubles 
+    // would be close enough to zero for the purposes of this game. Check for small doubles and change to zero.
+    // TODO: Possible put these into a method and call it adjustForZero(double value)
+    if ((xUnit < GameEngineConstants.EPSILON) && (xUnit > -GameEngineConstants.EPSILON))
+    {
+      xUnit = 0.0;
+    }
+
+    if ((yUnit < GameEngineConstants.EPSILON) && (yUnit > -GameEngineConstants.EPSILON))
+    {
+      yUnit = 0.0;
+    }
+
     return new Vector2D(xUnit, yUnit);
   }
 
@@ -239,7 +279,7 @@ public class Vector2D implements Cloneable
     double distY = this.y - y;
     return (float) Math.sqrt(distX * distX + distY * distY);
   }
-  
+
   /**
    * Return this Vector's String representation.
    */

@@ -49,33 +49,33 @@ public class EntityImage extends Entity2D
   {
     try
     {
-    
-    if (image == null)
-    {
-      throw new NullPointerException("Image with filename ' + filename + ' could not be loaded.");
-    }
 
-    // Assign the image, set the dimensions and the default position
-    this.image = image;
-    
-    while (getImage().getWidth(imageObserver) <= 0);
-    
-    setDimensions(this.image.getWidth(imageObserver), this.image.getHeight(imageObserver));
+      if (image == null)
+      {
+        throw new NullPointerException("Image with filename ' + filename + ' could not be loaded.");
+      }
 
-    // NOTE: Since entities have no knowledge of the display environment, this code should not exist in here.
+      // Assign the image, set the dimensions and the default position
+      this.image = image;
 
-    // Start the entity in the upper left corner of the display by default
-    position.x = 0;
-    position.y = 0;
+      while (getImage().getWidth(imageObserver) <= 0);
 
-    // Set the affine transform for the image
-    at = AffineTransform.getTranslateInstance(position.x, position.y);
-    
+      setDimensions(this.image.getWidth(imageObserver), this.image.getHeight(imageObserver));
+
+      // NOTE: Since entities have no knowledge of the display environment, this code should not exist in here.
+
+      // Start the entity in the upper left corner of the display by default
+      position.x = 0;
+      position.y = 0;
+
+      // Set the affine transform for the image
+      at = AffineTransform.getTranslateInstance(position.x, position.y);
+
     }
     catch (NullPointerException e)
     {
       System.out.println(e.getMessage());
-    }    
+    }
   }
 
   /**
@@ -137,12 +137,12 @@ public class EntityImage extends Entity2D
     try
     {
       image = tk.getImage(getURL(filename));
-      
+
       if (image == null)
       {
         throw new NullPointerException("Image with filename ' + filename + ' could not be loaded.");
       }
-      
+
       while (getImage().getWidth(imageObserver) <= 0);
 
       this.setDimensions(this.image.getWidth(imageObserver), this.image.getHeight(imageObserver));
@@ -210,7 +210,6 @@ public class EntityImage extends Entity2D
 
     entitySnapshot += "Image Height: " + image.getHeight(imageObserver) + "\n";
     entitySnapshot += "Image Width: " + image.getWidth(imageObserver) + "\n";
-    entitySnapshot += "Image Width: " + image.toString() + "\n";
 
     return entitySnapshot;
   }

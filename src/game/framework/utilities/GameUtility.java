@@ -85,6 +85,22 @@ public class GameUtility
     entity.setVelocity(v1.x, v1.y);
   }
 
+  public static Vector2D computeUnitVector(int angleInDegrees)
+  {
+    return computeUnitVector(angleInDegrees*Math.PI/180.0);
+  }
+  
+  public static Vector2D computeUnitVector(double angleInRadians)
+  {
+    double x = Math.cos((double)angleInRadians);
+    double y = Math.sin((double)angleInRadians);
+
+    x = adjustForZero(x);
+    y = adjustForZero(y);
+    
+    return new Vector2D(x, y);
+  }
+
   public static Vector2D computeRandomVelocity()
   {
     return computeRandomVelocity(1.0);
@@ -133,6 +149,19 @@ public class GameUtility
   public static double calcAngleMoveY(double angle)
   {
     return (double) (Math.sin(angle * Math.PI / 180));
+  }
+
+  public static double adjustForZero(double value)
+  {
+    // Check for zero, that is, sometimes one of the components might not be zero (e.g., 9.184850993605149E-15). However, very small doubles 
+    // would be close enough to zero for the purposes of this game. Check for small doubles and change to zero.
+    // TODO: Possible put these into a method and call it adjustForZero(double value)
+    if ((value < GameEngineConstants.EPSILON) && (value > -GameEngineConstants.EPSILON))
+    {
+      value = 0.0;
+    }
+
+    return value;
   }
 
   /*
