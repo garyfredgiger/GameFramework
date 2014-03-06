@@ -30,7 +30,7 @@ public class StaticText
    */
   private static int         screenWidth        = -1;
   private static int         screenHeight       = -1;
-  private static Rectangle2D bounds;
+  private static Rectangle2D bounds             = null;
 
   private int                x, y;                                 // The specified x-y position of the font
   protected Color            color;
@@ -38,11 +38,12 @@ public class StaticText
   private String             str                = "Default String";
   private boolean            centerHorizontal   = false;
   private boolean            centerVertical     = false;
-//  private boolean            offsetHorizontallyByWidthOfText = false;
-//  private boolean            offsetVerticallyByHeightOfText = false;
+  //  private boolean            offsetHorizontallyByWidthOfText = false;
+  //  private boolean            offsetVerticallyByHeightOfText = false;
 
   private int                drawX, drawY;                         // Stores the computed x-y position of the font
-  private int                additionalOffsetHorizontal, additionalOffsetVertical;
+  private int                additionalOffsetHorizontal;
+  private int                 additionalOffsetVertical;
   private Font               font;
 
   public StaticText(String msg, Color color, String fontName, int fontStyle, int fontSize, int screenWidth, int screenHeight)
@@ -51,19 +52,19 @@ public class StaticText
     centerHorizontally();
     centerVertically();
   }
-  
+
   public StaticText(String msg, Color color, Font font, int screenWidth, int screenHeight)
   {
     this(msg, -1, -1, color, font.getName(), font.getStyle(), font.getSize(), screenWidth, screenHeight);
     centerHorizontally();
     centerVertically();
   }
-  
+
   public StaticText(String msg, int x, int y, Color color, Font font, int screenWidth, int screenHeight)
   {
     this(msg, x, y, color, font.getName(), font.getStyle(), font.getSize(), screenWidth, screenHeight);
   }
-  
+
   public StaticText(String msg, int x, int y, Color color, String fontName, int fontStyle, int fontSize, int screenWidth, int screenHeight)
   {
     setText(msg);
@@ -77,7 +78,7 @@ public class StaticText
 
     additionalOffsetHorizontal = 0;
     additionalOffsetVertical = 0;
-    
+
     font = new Font(fontName, fontStyle, fontSize);
   }
 
@@ -100,7 +101,7 @@ public class StaticText
       System.out.println("StaticText::setText() - msg is null");
     }
   }
-  
+
   public void setAdditionalOffsetHorizontal(int offsetHorizontal)
   {
     additionalOffsetHorizontal = offsetHorizontal;
@@ -121,29 +122,40 @@ public class StaticText
     centerVertical = true;
   }
 
-//  public void offsetMsgHorizontallyByWidthOfText()
+  // These might not work since the bounds will not be computed until the draw method is called
+//  public int getTextWidth()
 //  {
-//    offsetHorizontallyByWidthOfText = true;
+//    return (bounds != null ? (int)bounds.getWidth() : -1);
 //  }
 //
-//  public void offsetMsgVerticallyByHeightOfText()
+//  public int getTextHeight()
 //  {
-//    offsetVerticallyByHeightOfText = true;
+//    return (bounds != null ? (int)bounds.getHeight() : -1);
 //  }
+
+  //  public void offsetMsgHorizontallyByWidthOfText()
+  //  {
+  //    offsetHorizontallyByWidthOfText = true;
+  //  }
+  //
+  //  public void offsetMsgVerticallyByHeightOfText()
+  //  {
+  //    offsetVerticallyByHeightOfText = true;
+  //  }
 
   public void draw(Graphics2D g)
   {
     // Determine the position of the string
     g.setFont(font);
     bounds = g.getFontMetrics().getStringBounds(str, g);
-    
+
     drawX = (centerHorizontal ? (int) ((screenWidth - bounds.getWidth()) / 2) : x);
     drawY = (centerVertical ? (int) ((screenHeight - bounds.getHeight()) / 2) : y);
 
     // Not sure if I am going to use this
-//    drawX = (offsetHorizontallyByWidthOfText ? (int) (drawX - bounds.getWidth()) : drawX);
-//    drawY = (offsetVerticallyByHeightOfText ? (int) (drawY - bounds.getHeight()) : drawY);
-    
+    //    drawX = (offsetHorizontallyByWidthOfText ? (int) (drawX - bounds.getWidth()) : drawX);
+    //    drawY = (offsetVerticallyByHeightOfText ? (int) (drawY - bounds.getHeight()) : drawY);
+
     // Draw the string
     g.setColor(color);
     g.drawString(str, (drawX + additionalOffsetHorizontal), (drawY + additionalOffsetVertical));
