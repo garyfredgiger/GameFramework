@@ -101,16 +101,19 @@ public class EntityImage extends Entity2D
   }
 
   /**
-   * Translates and/or rotates the currently displayed image. This is usually done right after the x-y coordinates or the facing angle are modified. When the image is drawn to the canvas, these new
-   * changes will take effect.
+   * Translates and/or rotates the currently displayed image. This is usually done right after the x-y coordinates or the facing angle are modified. 
+   * When the image is drawn to the canvas, these new changes will take effect.
    */
   public void transform()
   {
+    // Given an image with width w, height h and whose upper left corner is at position P(x, y) with center C(x, y) (where Cx = Px + w/2W and Cy = Py + h/2),
+    // An identity matrix is created and moves the upper left corner of the image P to P' where P' and C have the same coordinates. 
     at.setToIdentity();
     at.translate((int) position.x + width / 2, (int) position.y + height / 2);
 
-    // TODO: Possible Speedup, only convert to radians when the face angle is changed
-    at.rotate(Math.toRadians(getFaceAngle()));
+    // The image is then rotated around point P', which is the center of the image with respect to the original image position, the image is then translated
+    // from P' back to P
+    at.rotate(Math.toRadians(getFaceAngle()));  // TODO: Possible Speedup, only convert to radians when the face angle is changed
     at.translate(-width / 2, -height / 2);
   }
 
