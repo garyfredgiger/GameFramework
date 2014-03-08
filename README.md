@@ -48,10 +48,10 @@ After importing this projects you should not notice any build errors. If you do,
 
 1. Right click on the GameFramework project in the Eclispe Package explorer.
 2. Select Properties which will bring up the Properties dialog box.
-3. On the left hand side select the Java Compiler, on the right side of the dialog box you will see the Java Compiler options.
-4. Check that the *Compiller compliance level* is 1.6. If not then select the check the box at the top of the screen labeled *Enable project specific settings* and change the compiler to version 1.6 in the combo box next to *Compiller compliance level*.
+3. On the left hand side select the Java Compiler option, on the right side of the dialog box you will see the Java Compiler options.
+4. Check that the *Compiller compliance level* is 1.6. If not then select the check the box at the top of the screen labeled *Enable project specific settings* and change the compiler to version 1.6 in the combo box next to *Compiller compliance level*. When you click on the OK button at the bottom of the screen the project will be rebuilt with Java version 1.6. 
 
-After the project builds successfully, you are rady to use it to create your own games. To see it in action check out either of the games that I wrote(*[Space Invaders Clone](https://github.com/garyfredgiger/SpaceInvadersClone.git)* or (*[Asteroids Clone](https://github.com/garyfredgiger/GalacticWarReboot.git)*) or you can start the tutorials which can be found *[here](https://github.com/garyfredgiger/GameFrameworkTutorials.git)*.
+After the project builds successfully, you are rady to use it to create your own games. To see it in action check out either of the games that I wrote(the *[Space Invaders Clone](https://github.com/garyfredgiger/SpaceInvadersClone.git)* or the *[Asteroids Clone](https://github.com/garyfredgiger/GalacticWarReboot.git)*) or you can start the tutorials which can be found *[here](https://github.com/garyfredgiger/GameFrameworkTutorials.git)*.
 
 ## If You Encounter Problems?
 
