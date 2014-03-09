@@ -40,6 +40,7 @@ public abstract class GameEngine
   private LinkedList<Entity2D>            playerShots;
   private LinkedList<Entity2D>            enemyShots;
   private LinkedList<Entity2D>            powerups;
+  private LinkedList<Entity2D>            misc;
 
   // TODO: Possibly add a power-up entity list. 
 
@@ -53,6 +54,7 @@ public abstract class GameEngine
   private boolean                         cleanPlayerShotsEntityList;
   private boolean                         cleanEnemiesEntityList;
   private boolean                         cleanPowerupsEntityList;
+  private boolean                         cleanMiscEntityList;
 
   // Statistics variables for game loop
   private long                            frameCount;                                         // Tracks the number of frames that occur each second  
@@ -296,7 +298,8 @@ public abstract class GameEngine
     playerShots = new LinkedList<Entity2D>();
     enemyShots = new LinkedList<Entity2D>();
     powerups = new LinkedList<Entity2D>();
-
+    misc = new LinkedList<Entity2D>();
+    
     /*
      *  Set default values
      */
@@ -426,6 +429,19 @@ public abstract class GameEngine
       userGameUpdateEntity(currentPowerup);
     }
 
+ // Update positions for the misc entities 
+    for (int i = 0; i < misc.size(); i++)
+    {
+      // Update the entity
+      Entity2D currentPowerup = misc.get(i);
+      currentPowerup.updatePosition(delta);
+      currentPowerup.updateRotation(delta);
+      currentPowerup.updateLifetime();
+
+      // Call the user defined method to perform any specific updates on each sprite
+      userGameUpdateEntity(currentPowerup);
+    }
+    
     /*
     * Update the player
     */
@@ -613,6 +629,12 @@ public abstract class GameEngine
       currentPowerup.draw(g);
     }
 
+    for (int i = 0; i < misc.size(); i++)
+    {
+      Entity2D currentPowerup = misc.get(i);
+      currentPowerup.draw(g);
+    }
+    
     // Draw the player
     player.draw(g);
 
@@ -699,6 +721,11 @@ public abstract class GameEngine
     addEntity(entity, GameEngineConstants.EntityTypes.POWER_UP, powerups);
   }
 
+  public void addMiscEntity(Entity2D entity)
+  {
+    addEntity(entity, GameEngineConstants.EntityTypes.MISC, misc);
+  }
+  
   private void addEntity(Entity2D entity, GameEngineConstants.EntityTypes type, LinkedList<Entity2D> entityList)
   {
     if (entity == null)
@@ -742,6 +769,11 @@ public abstract class GameEngine
     return powerups;
   }
 
+  public LinkedList<Entity2D> getMiscEntities()
+  {
+    return misc;
+  }
+  
   /*
    * Clear the different entity lists
    */
@@ -765,11 +797,17 @@ public abstract class GameEngine
     powerups.clear();
   }
 
+  public void clearMiscEntities()
+  {
+    misc.clear();
+  }
+  
   public void resetEntityLists()
   {
     clearEnemies();
     clearEnemyShot();
     clearPlayerShot();
+    clearMiscEntities();
   }
 
   /*
@@ -814,6 +852,16 @@ public abstract class GameEngine
   {
     cleanPowerupsEntityList = false;
   }
+  
+  public void removeDeadMiscEntitiesFromEntityList()
+  {
+    cleanMiscEntityList = true;
+  }
+  
+  public void doNotRemoveDeadMiscEntitiesFromEntityList()
+  {
+    cleanMiscEntityList = false;
+  }
 
   // DONE
   /*
@@ -839,6 +887,11 @@ public abstract class GameEngine
     if (cleanPowerupsEntityList)
     {
       removeDeadEntitiesFromEntityList(powerups);
+    }
+    
+    if (cleanMiscEntityList)
+    {
+      removeDeadEntitiesFromEntityList(misc);
     }
   }
 
@@ -895,6 +948,8 @@ public abstract class GameEngine
     g.drawString("Num Player Shots: " + playerShots.size(), 20, line);
     line += 16;
     g.drawString("Num Powerup: " + powerups.size(), 20, line);
+    line += 16;
+    g.drawString("Num Misc Entities: " + misc.size(), 20, line);
     line += 16;
     g.drawString("Delta: " + decimalPlaces9.format(delta), 20, line);
     line += 16;

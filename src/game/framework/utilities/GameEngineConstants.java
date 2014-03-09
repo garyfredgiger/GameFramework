@@ -35,7 +35,7 @@ public class GameEngineConstants
 
   public static enum EntityTypes
   {
-    PLAYER("Player"), PLAYER_SHOT("Player Shot"), ENEMY("Enemy"), ENEMY_SHOT("Enemy Shot"), POWER_UP("Power Up"), UNDEFINED("Undefined");
+    PLAYER("Player"), PLAYER_SHOT("Player Shot"), ENEMY("Enemy"), ENEMY_SHOT("Enemy Shot"), POWER_UP("Power Up"), MISC("Misc") ,UNDEFINED("Undefined");
 
     private String label;
 
